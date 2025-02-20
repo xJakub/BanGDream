@@ -178,8 +178,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
 
 LOGIN_REDIRECT_URL = '/'
-LOG_EMAIL = 'emails-log@schoolido.lu'
-PASSWORD_EMAIL = 'password@schoolido.lu'
+LOG_EMAIL = 'circles@xjakub.com'
+PASSWORD_EMAIL = 'circles@xjakub.com'
 AWS_SES_RETURN_PATH = 'contact@bandori.party'
 
 RECAPTCHA_PRIVATE_KEY = ''

@@ -82,7 +82,7 @@ SITE_IMAGE_PER_LANGUAGE = {
 ############################################################
 # Contact & Social
 
-CONTACT_EMAIL = 'contact@bandori.party'
+CONTACT_EMAIL = 'circles@xjakub.com'
 CONTACT_REDDIT = 'AmbiBambiii'
 CONTACT_FACEBOOK = 'BandoriParty'
 CONTACT_DISCORD = 'https://discord.gg/njKRrAg'
@@ -164,18 +164,18 @@ ACTIVITY_TAGS = [
     # Events
     ('PRIDEReady2024', {
         'translation': u'PRIDE Ready! 2024 🏳️‍🌈🏳️‍⚧️',
-        'start_date': datetime.datetime(2024, 6, 1, 17, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2024, 6, 1, 1, tzinfo=timezone.utc),
         'end_date': datetime.datetime(2024, 6, 10, 17, tzinfo=timezone.utc),
     }),
     ('PackingOurBagsSuitcase', {
         'translation': u'Packing Our Bags Suitcase 🧳',
         'start_date': datetime.datetime(2023, 8, 7, 19, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2024, 9, 1, 19, tzinfo=timezone.utc),
+        'end_date': datetime.datetime(2023, 9, 1, 19, tzinfo=timezone.utc),
     }),
     ('PackingOurBagsSticker', {
         'translation': u'Packing Our Bags Sticker ☀️',
         'start_date': datetime.datetime(2023, 8, 7, 19, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2024, 9, 1, 19, tzinfo=timezone.utc),
+        'end_date': datetime.datetime(2023, 9, 1, 19, tzinfo=timezone.utc),
     }),
     ('PRIDEReady2023', {
         'translation': u'PRIDE Ready! 2023 🏳️‍🌈🏳️‍⚧️',

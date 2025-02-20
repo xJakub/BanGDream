@@ -59,6 +59,7 @@ from bang import models, forms
 # User Collection
 
 class UserCollection(_UserCollection):
+    report_allow_delete = True
     class ItemView(_UserCollection.ItemView):
 
         def get_meta_links(self, user, *args, **kwargs):
