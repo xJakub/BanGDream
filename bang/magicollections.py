@@ -254,6 +254,9 @@ class ActivityCollection(_ActivityCollection):
                     }
             return buttons
 
+    class AddView(_ActivityCollection.AddView):
+        staff_required = True
+
 ############################################################
 ############################################################
 ############################################################
