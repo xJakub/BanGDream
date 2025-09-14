@@ -3,6 +3,7 @@ import math, simplejson, random
 from itertools import chain
 from collections import OrderedDict
 from django.conf import settings as django_settings
+from django.core.exceptions import PermissionDenied
 from django.utils.translation import ugettext_lazy as _, string_concat, get_language
 from django.utils.formats import date_format
 from django.utils.html import format_html
@@ -255,7 +256,10 @@ class ActivityCollection(_ActivityCollection):
             return buttons
 
     class AddView(_ActivityCollection.AddView):
-        staff_required = True
+        def check_permissions(self, request, context):
+            super(ActivityCollection.AddView, self).check_permissions(request, context)
+            if not request.user.is_authenticated() or request.user.date_joined.year >= 2025:
+                raise PermissionDenied()
 
 ############################################################
 ############################################################
