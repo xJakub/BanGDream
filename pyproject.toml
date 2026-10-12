@@ -13,7 +13,7 @@ dependencies = [
 [project.optional-dependencies]
 # DB-backend-specific (prod's engine), only needed if running against MySQL.
 mysql = [
-    "mysqlclient==1.4.6",
+    "mysqlclient==2.3.0",
 ]
 
 [tool.uv]
