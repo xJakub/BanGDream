@@ -68,7 +68,6 @@ INSTALLED_APPS = (
     'magi',
     'api',
     'rest_framework',
-    'oauth2_provider',
     'django.contrib.auth',
 )
 
@@ -102,13 +101,6 @@ REST_FRAMEWORK = {
     'PAGINATE_BY': 10,
     'MAX_PAGINATE_BY': 100,
     'PAGINATE_BY_PARAM': 'page_size',
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'oauth2_provider.ext.rest_framework.OAuth2Authentication',
-    ),
-}
-
-OAUTH2_PROVIDER = {
-    'ALLOWED_REDIRECT_URI_SCHEMES': ['http', 'https', 'magicircles'],
 }
 
 # Database

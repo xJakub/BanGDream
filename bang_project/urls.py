@@ -23,5 +23,4 @@ urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^api/', include(router.urls)),
     re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    re_path(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]
