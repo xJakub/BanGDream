@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='member',
             name='d_alt_names',
-            field=models.TextField(null=True, verbose_name=b'Offstage Name'),
+            field=models.TextField(null=True, verbose_name='Offstage Name'),
             preserve_default=True,
         ),
         migrations.AddField(

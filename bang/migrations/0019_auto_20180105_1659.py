@@ -24,8 +24,8 @@ class Migration(migrations.Migration):
                 ('max_leveled', models.NullBooleanField(verbose_name='Max Leveled')),
                 ('first_episode', models.NullBooleanField(verbose_name='1st episode')),
                 ('memorial_episode', models.NullBooleanField(verbose_name='Memorial episode')),
-                ('account', models.ForeignKey(related_name='cardscollectors', verbose_name='Account', to='bang.Account')),
-                ('card', models.ForeignKey(related_name='collectedcards', verbose_name='Card', to='bang.Card')),
+                ('account', models.ForeignKey(related_name='cardscollectors', verbose_name='Account', to='bang.Account', on_delete=models.CASCADE)),
+                ('card', models.ForeignKey(related_name='collectedcards', verbose_name='Card', to='bang.Card', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -42,8 +42,8 @@ class Migration(migrations.Migration):
                 ('ranking', models.PositiveIntegerField(null=True, verbose_name='Ranking')),
                 ('song_score', models.PositiveIntegerField(null=True, verbose_name='Song score')),
                 ('song_ranking', models.PositiveIntegerField(null=True, verbose_name='Song ranking')),
-                ('account', models.ForeignKey(related_name='events', verbose_name='Account', to='bang.Account')),
-                ('event', models.ForeignKey(related_name='participations', verbose_name='Event', to='bang.Event')),
+                ('account', models.ForeignKey(related_name='events', verbose_name='Account', to='bang.Account', on_delete=models.CASCADE)),
+                ('event', models.ForeignKey(related_name='participations', verbose_name='Event', to='bang.Event', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -54,8 +54,8 @@ class Migration(migrations.Migration):
             name='FavoriteCard',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('card', models.ForeignKey(related_name='favorited', verbose_name='Card', to='bang.Card')),
-                ('owner', models.ForeignKey(related_name='favorite_cards', to=settings.AUTH_USER_MODEL)),
+                ('card', models.ForeignKey(related_name='favorited', verbose_name='Card', to='bang.Card', on_delete=models.CASCADE)),
+                ('owner', models.ForeignKey(related_name='favorite_cards', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -70,8 +70,8 @@ class Migration(migrations.Migration):
                 ('i_difficulty', models.PositiveIntegerField(default=0, verbose_name='Difficulty', choices=[(0, 'Easy'), (1, 'Normal'), (2, 'Hard'), (3, 'Expert')])),
                 ('score', models.PositiveIntegerField(null=True, verbose_name='Score')),
                 ('full_combo', models.NullBooleanField(verbose_name='Full combo')),
-                ('account', models.ForeignKey(related_name='playedsong', verbose_name='Account', to='bang.Account')),
-                ('song', models.ForeignKey(related_name='playedby', verbose_name='Song', to='bang.Song')),
+                ('account', models.ForeignKey(related_name='playedsong', verbose_name='Account', to='bang.Account', on_delete=models.CASCADE)),
+                ('song', models.ForeignKey(related_name='playedby', verbose_name='Song', to='bang.Song', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,

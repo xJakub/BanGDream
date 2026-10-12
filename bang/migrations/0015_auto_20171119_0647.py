@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='Image',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('image', models.ImageField(upload_to=magi.utils.uploadToKeepName(b'images/'))),
+                ('image', models.ImageField(upload_to=magi.utils.uploadToKeepName('images/'))),
             ],
             options={
                 'abstract': False,

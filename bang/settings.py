@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import datetime, pytz
 from django.conf import settings as django_settings
-from django.utils.translation import ugettext_lazy as _, string_concat
-from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from django.utils.text import format_lazy
 
 from magi.default_settings import (
     DEFAULT_ACTIVITY_TAGS,
@@ -34,13 +34,13 @@ SITE_EMOJIS = [u'★', u'🎸', u'🤘']
 SITE_IMAGE = 'share/bandori_party.png'
 SITE_LOGO = 'logo/bandori_party.png'
 
-GAME_NAME = string_concat(_('BanG Dream!'), ' ', _('Girls Band Party'))
+GAME_NAME = format_lazy('{}{}{}', _('BanG Dream!'), ' ', _('Girls Band Party'))
 GAME_URL = 'https://bang-dream.bushimo.jp/'
 
 COLOR = '#E40046'
 SECONDARY_COLOR = '#F2B141'
 
-LAUNCH_DATE = datetime.datetime(2017, 04, 9, 12, 0, 0, tzinfo=pytz.UTC)
+LAUNCH_DATE = datetime.datetime(2017, 4, 9, 12, 0, 0, tzinfo=pytz.UTC)
 
 ############################################################
 # Images
@@ -164,103 +164,103 @@ ACTIVITY_TAGS = [
     # Events
     ('PRIDEReady2024', {
         'translation': u'PRIDE Ready! 2024 🏳️‍🌈🏳️‍⚧️',
-        'start_date': datetime.datetime(2024, 6, 1, 1, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2024, 6, 10, 17, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2024, 6, 1, 1, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2024, 6, 10, 17, tzinfo=datetime.timezone.utc),
     }),
     ('PackingOurBagsSuitcase', {
         'translation': u'Packing Our Bags Suitcase 🧳',
-        'start_date': datetime.datetime(2023, 8, 7, 19, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2023, 9, 1, 19, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2023, 8, 7, 19, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2023, 9, 1, 19, tzinfo=datetime.timezone.utc),
     }),
     ('PackingOurBagsSticker', {
         'translation': u'Packing Our Bags Sticker ☀️',
-        'start_date': datetime.datetime(2023, 8, 7, 19, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2023, 9, 1, 19, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2023, 8, 7, 19, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2023, 9, 1, 19, tzinfo=datetime.timezone.utc),
     }),
     ('PRIDEReady2023', {
         'translation': u'PRIDE Ready! 2023 🏳️‍🌈🏳️‍⚧️',
-        'start_date': datetime.datetime(2023, 6, 1, 17, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2023, 6, 10, 17, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2023, 6, 1, 17, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2023, 6, 10, 17, tzinfo=datetime.timezone.utc),
     }),
     ('DokiDokiDecorationWinter2022', {
         'translation': u'DokiDokiDecoration Winter 2022',
-        'start_date': datetime.datetime(2022, 12, 1, 17, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2022, 12, 25, 0, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2022, 12, 1, 17, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2022, 12, 25, 0, tzinfo=datetime.timezone.utc),
     }),
     ('PRIDEReady2022', {
         'translation': u'PRIDE Ready! 2022 🏳️‍🌈🏳️‍⚧️',
-        'start_date': datetime.datetime(2022, 6, 1, 17, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2022, 6, 10, 17, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2022, 6, 1, 17, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2022, 6, 10, 17, tzinfo=datetime.timezone.utc),
     }),
     ('PetiteIdolStudioColorsOfAutumn', {
         'translation': u'📸 Petite Idol Studio - 🎃 Colors of Autumn 🍠',
-        'start_date': datetime.datetime(2021, 11, 23, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2021, 12, 23, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2021, 11, 23, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2021, 12, 23, tzinfo=datetime.timezone.utc),
     }),
     ('madlibs2021', {
         'translation': u'madlibs',
-        'start_date': datetime.datetime(2021, 9, 28, 0, 0, 0, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2021, 10, 20, 0, 0, 0, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2021, 9, 28, 0, 0, 0, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2021, 10, 20, 0, 0, 0, tzinfo=datetime.timezone.utc),
     }),
     ('RASpreciaton', {
         'translation': u'RASpreciaton 🎧',
-        'start_date': datetime.datetime(2021, 6, 15, 0, 0, 0, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2021, 7, 1, 0, 0, 0, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2021, 6, 15, 0, 0, 0, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2021, 7, 1, 0, 0, 0, tzinfo=datetime.timezone.utc),
     }),
     ('PRIDEReady2021', {
         'translation': u'PRIDE Ready! 2021 🏳️‍🌈🏳️‍⚧️',
-        'start_date': datetime.datetime(2021, 6, 3, 17, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2021, 6, 10, 17, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2021, 6, 3, 17, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2021, 6, 10, 17, tzinfo=datetime.timezone.utc),
     }),
     ('DaysofBanGDream', {
         'translation': 'DaysofBanGDream!',
-        'start_date': datetime.datetime(2021, 3, 10, 0, 0, 0, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2021, 4, 11, 10, 0, 0, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2021, 3, 10, 0, 0, 0, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2021, 4, 11, 10, 0, 0, tzinfo=datetime.timezone.utc),
     }),
     ('StockingStuffingParty', {
         'translation': 'StockingStuffingParty',
-        'start_date': datetime.datetime(2020, 12, 12, 0, 0, 0, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2020, 12, 25, 0, 0, 0, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2020, 12, 12, 0, 0, 0, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2020, 12, 25, 0, 0, 0, tzinfo=datetime.timezone.utc),
     }),
     ('BBSChallenge', {
         'translation': 'BBSChallenge',
-        'start_date': datetime.datetime(2020, 03, 25, 10, 00, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2020, 04, 19, 10, 00, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2020, 3, 25, 10, 0, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2020, 4, 19, 10, 0, tzinfo=datetime.timezone.utc),
     }),
     ('FanLettersForMyValentine', {
         'translation': 'FanLettersForMyValentine',
-        'start_date': datetime.datetime(2020, 02, 10, 10, 00, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2020, 03, 01, 10, 00, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2020, 2, 10, 10, 0, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2020, 3, 1, 10, 0, tzinfo=datetime.timezone.utc),
     }),
     ('petiteidolstudiosummer', {
         'translation': 'PetiteIdolStudioSummer',
-        'start_date': datetime.datetime(2018, 8, 1, 13, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2018, 8, 31, 13, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2018, 8, 1, 13, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2018, 8, 31, 13, tzinfo=datetime.timezone.utc),
     }),
     ('changemymindchallenge', {
         'translation': _('Change My Mind Challenge'),
-        'start_date': datetime.datetime(2018, 5, 20, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2018, 6, 3, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2018, 5, 20, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2018, 6, 3, tzinfo=datetime.timezone.utc),
     }),
     ('thankyouyurushii', {
         'translation': _('Thank you Yurishii'),
-        'start_date': datetime.datetime(2018, 5, 13, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2018, 5, 20, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2018, 5, 13, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2018, 5, 20, tzinfo=datetime.timezone.utc),
     }),
     ('thankyouakesaka', {
         'translation': _('Thank you Ake-san'),
-        'start_date': datetime.datetime(2018, 9, 18, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2018, 9, 25, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2018, 9, 18, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2018, 9, 25, tzinfo=datetime.timezone.utc),
     }),
     ('cosparty18', {
         'translation': _('CosParty 2018'),
-        'start_date': datetime.datetime(2018, 10, 10, 0, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2018, 11, 15, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2018, 10, 10, 0, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2018, 11, 15, tzinfo=datetime.timezone.utc),
     }),
     ('bandorisnap', {
         'translation': 'Bandori SnaP!',
-        'start_date': datetime.datetime(2019, 10, 2, 13, tzinfo=timezone.utc),
-        'end_date': datetime.datetime(2019, 11, 10, tzinfo=timezone.utc),
+        'start_date': datetime.datetime(2019, 10, 2, 13, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2019, 11, 10, tzinfo=datetime.timezone.utc),
     }),
 ] + DEFAULT_ACTIVITY_TAGS
 
@@ -287,8 +287,8 @@ ACCOUNT_TAB_ORDERING = ['about', 'collectiblecard', 'eventparticipation', 'playe
 ############################################################
 # Technical settings
 
-SITE_URL = 'https://bandori.party/'
-SITE_STATIC_URL = '//i.bandori.party/'
+SITE_URL = django_settings.SITE_URL
+SITE_STATIC_URL = django_settings.SITE_STATIC_URL
 
 GET_GLOBAL_CONTEXT = bangGlobalContext
 ACCOUNT_MODEL = models.Account
@@ -365,8 +365,8 @@ ENABLED_PAGES['gallery'] = {
     'icon': 'pictures',
     'navbar_link_list': 'girlsbandparty',
     'page_description': lambda: u'{} - {}'.format(_('Gallery of {license} images').format(
-        license=unicode(GAME_NAME)), u', '.join(
-            [unicode(_d['translation']) for _d in models.Asset.TYPES.values()])),
+        license=str(GAME_NAME)), u', '.join(
+            [str(_d['translation']) for _d in models.Asset.TYPES.values()])),
 }
 
 ENABLED_PAGES['officialart'] = {
@@ -548,7 +548,7 @@ for _name, _details in GROUPS:
 
 _HDESIGN = dict(GROUPS)['design'].copy()
 _HDESIGN.update({
-    'translation': string_concat(_('Graphic designer'), ' - ', _('Manager')),
+    'translation': format_lazy('{}{}{}', _('Graphic designer'), ' - ', _('Manager')),
     'requires_staff': True,
     'permissions': [
         'access_site_before_launch',

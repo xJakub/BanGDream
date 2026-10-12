@@ -15,10 +15,10 @@ def generate_settings():
     ############################################################
     # BanG Dream!
 
-    print 'Get schools'
+    print('Get schools')
     schools = listUnique(models.Member.objects.filter(school__isnull=False).values_list('school', flat=True).distinct())
 
-    print 'Get areas'
+    print('Get areas')
     areas = [
         {
             'id': area.id,
@@ -33,7 +33,7 @@ def generate_settings():
     # Girls Band Party
 
     # Events & Gachas
-    print 'Add events and gachas to latest news'
+    print('Add events and gachas to latest news')
     latest_news = []
     old_lang = get_language()
     for version_name, events in getCurrentEventsAndGachas().items():
@@ -44,7 +44,7 @@ def generate_settings():
                 continue
             translation_activate(version['code'])
             latest_news.append({
-                'title': unicode(event.t_name),
+                'title': str(event.t_name),
                 'image': image,
                 'url': event.item_url,
                 'hide_title': True,
@@ -52,7 +52,7 @@ def generate_settings():
             })
     translation_activate(old_lang)
 
-    print 'Get max stats'
+    print('Get max stats')
     stats = {
         'performance_max': None,
         'performance_trained_max': None,
@@ -79,7 +79,7 @@ def generate_settings():
 
     ############################################################
 
-    print 'Save generated settings'
+    print('Save generated settings')
     generateSettings({
         'LATEST_NEWS': latest_news,
         'MAX_STATS': stats,

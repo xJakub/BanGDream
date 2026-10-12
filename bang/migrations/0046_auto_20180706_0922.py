@@ -26,13 +26,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='asset',
             name='i_type',
-            field=models.PositiveIntegerField(null=True, verbose_name=b'Type', choices=[(0, 'Comics'), (1, 'Backgrounds'), (2, 'Stamps'), (3, 'Titles'), (4, 'Interface'), (5, 'Official art')]),
+            field=models.PositiveIntegerField(null=True, verbose_name='Type', choices=[(0, 'Comics'), (1, 'Backgrounds'), (2, 'Stamps'), (3, 'Titles'), (4, 'Interface'), (5, 'Official art')]),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='item',
             name='name',
-            field=models.CharField(help_text=b'plural', max_length=100, null=True, verbose_name='Title'),
+            field=models.CharField(help_text='plural', max_length=100, null=True, verbose_name='Title'),
             preserve_default=True,
         ),
     ]

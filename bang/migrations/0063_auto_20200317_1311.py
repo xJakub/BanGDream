@@ -58,19 +58,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='card',
             name='i_skill_influence',
-            field=models.PositiveIntegerField(null=True, verbose_name=b'{influence}', choices=[(1, 'Power'), (2, 'Cool'), (3, 'Pure'), (4, 'Happy'), (501, b"Poppin'Party"), (502, b'Afterglow'), (503, b'Pastel*Palettes'), (504, b'Roselia'), (505, b'Hello, Happy World!'), (506, b'RAISE A SUILEN'), (507, b'Morfonica')]),
+            field=models.PositiveIntegerField(null=True, verbose_name='{influence}', choices=[(1, 'Power'), (2, 'Cool'), (3, 'Pure'), (4, 'Happy'), (501, "Poppin'Party"), (502, 'Afterglow'), (503, 'Pastel*Palettes'), (504, 'Roselia'), (505, 'Hello, Happy World!'), (506, 'RAISE A SUILEN'), (507, 'Morfonica')]),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='card',
             name='skill_cond_percentage',
-            field=models.FloatField(help_text=b'0-100', null=True, verbose_name=b'{cond_percentage}'),
+            field=models.FloatField(help_text='0-100', null=True, verbose_name='{cond_percentage}'),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='card',
             name='i_skill_special',
-            field=models.PositiveIntegerField(null=True, verbose_name=b'Skill details - Special case', choices=[(0, b'Based off PERFECT notes'), (1, b'Scoreup based on stamina'), (2, b'Better scoreup if you can hit perfects'), (3, b'Based off perfects, but rewards full-band teams'), (4, b'Better scoreup if you can hit perfects, with a band/attribute influence')]),
+            field=models.PositiveIntegerField(null=True, verbose_name='Skill details - Special case', choices=[(0, 'Based off PERFECT notes'), (1, 'Scoreup based on stamina'), (2, 'Better scoreup if you can hit perfects'), (3, 'Based off perfects, but rewards full-band teams'), (4, 'Better scoreup if you can hit perfects, with a band/attribute influence')]),
             preserve_default=True,
         ),
     ]

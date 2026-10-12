@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='card',
             name='_cache_gacha_image',
-            field=models.ImageField(null=True, upload_to=magi.utils.uploadItem(b'e')),
+            field=models.ImageField(null=True, upload_to=magi.utils.uploadItem('e')),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='card',
             name='chibi',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'c/c'), null=True, verbose_name='Chibi'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('c/c'), null=True, verbose_name='Chibi'),
             preserve_default=True,
         ),
         migrations.AlterField(

@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='member',
             name='height',
-            field=models.PositiveIntegerField(help_text=b'in cm', null=True, verbose_name='Height'),
+            field=models.PositiveIntegerField(help_text='in cm', null=True, verbose_name='Height'),
             preserve_default=True,
         ),
     ]

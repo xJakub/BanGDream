@@ -2,7 +2,8 @@
 from __future__ import division
 import datetime, time
 from collections import OrderedDict
-from django.utils.translation import ugettext_lazy as _, pgettext_lazy, string_concat, get_language
+from django.utils.translation import gettext_lazy as _, pgettext_lazy, get_language
+from django.utils.text import format_lazy
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -82,7 +83,7 @@ def displayNames(item, field_name='name'):
     t_name = getattr(item, u't_{}'.format(field_name))
     return listUnique([
         name for name in [
-            unicode(t_name) if t_name else None,
+            str(t_name) if t_name else None,
             getattr(item, field_name),
             getattr(item, u'japanese_{}'.format(field_name)),
         ] if name
@@ -181,8 +182,8 @@ class Account(BaseAccount):
     device = models.CharField(_('Device'), help_text=_('The model of your device. Example: Nexus 5, iPhone 4, iPad 2, ...'), max_length=150, null=True)
     stargems_bought = models.PositiveIntegerField(null=True)
 
-    screenshot = models.ImageField(_('Screenshot'), help_text=_('In-game profile screenshot'), upload_to=uploadItem('account_screenshot'), null=True)
-    _thumbnail_screenshot = models.ImageField(null=True, upload_to=uploadThumb('account_screenshot'))
+    screenshot = models.ImageField(_('Screenshot'), help_text=_('In-game profile screenshot'), upload_to=uploadItem('account_screenshot'), null=True, max_length=255)
+    _thumbnail_screenshot = models.ImageField(null=True, upload_to=uploadThumb('account_screenshot'), max_length=255)
     level_on_screenshot_upload = models.PositiveIntegerField(null=True)
     is_hidden_from_leaderboard = models.BooleanField('Hide from leaderboard', default=False, db_index=True)
 
@@ -200,22 +201,22 @@ class Account(BaseAccount):
 class Member(MagiModel):
     collection_name = 'member'
 
-    owner = models.ForeignKey(User, related_name='added_members')
+    owner = models.ForeignKey(User, related_name='added_members', on_delete=models.CASCADE)
 
-    name = models.CharField(string_concat(_('Name')), max_length=100, unique=True)
+    name = models.CharField(format_lazy('{}', _('Name')), max_length=100, unique=True)
     NAMES_CHOICES = LANGUAGES_NEED_OWN_NAME
     NAME_SOURCE_LANGUAGES = ['ja']
     d_names = models.TextField(_('Name'), null=True)
 
-    japanese_name = models.CharField(string_concat(_('Name'), ' (', t['Japanese'], ')'), max_length=100)
+    japanese_name = models.CharField(format_lazy('{}{}{}{}', _('Name'), ' (', t['Japanese'], ')'), max_length=100)
     display_name = property(displayNameHTML)
 
-    alt_name = models.CharField(string_concat(_('Name'), ' (Offstage)'), max_length=100, null=True)
+    alt_name = models.CharField(format_lazy('{}{}', _('Name'), ' (Offstage)'), max_length=100, null=True)
     ALT_NAMES_CHOICES = LANGUAGES_NEED_OWN_NAME
     ALT_NAME_SOURCE_LANGUAGES = ['ja']
     d_alt_names = models.TextField('Offstage Name', null=True)
 
-    japanese_alt_name = models.CharField(string_concat(_('Name'), ' (Offstage - ', t['Japanese'], ')'), max_length=100, null=True)
+    japanese_alt_name = models.CharField(format_lazy('{}{}{}{}', _('Name'), ' (Offstage - ', t['Japanese'], ')'), max_length=100, null=True)
     display_alt_name = property(lambda _s: displayNameHTML(_s, field_name='alt_name'))
     @property
     def first_name(self):
@@ -225,10 +226,10 @@ class Member(MagiModel):
             return self.t_name.split(' ')[-1]
         return self.t_name.split(' ')[0]
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('i'))
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('i'))
-    square_image = models.ImageField(_('Image'), upload_to=uploadItem('i/m'))
-    _original_square_image = models.ImageField(null=True, upload_to=uploadTiny('i/m'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('i'), max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('i'), max_length=255)
+    square_image = models.ImageField(_('Image'), upload_to=uploadItem('i/m'), max_length=255)
+    _original_square_image = models.ImageField(null=True, upload_to=uploadTiny('i/m'), max_length=255)
     image_for_favorite_character = property(lambda _s: _s.square_image_url)
 
     BAND_CHOICES = (
@@ -271,7 +272,7 @@ class Member(MagiModel):
 
     # TODO: separate page of voice acctresses
     romaji_CV = models.CharField(_('CV'), help_text='In romaji.', max_length=100, null=True)
-    CV = models.CharField(string_concat(_('CV'), ' (', t['Japanese'], ')'), help_text='In Japanese characters.', max_length=100, null=True)
+    CV = models.CharField(format_lazy('{}{}{}{}', _('CV'), ' (', t['Japanese'], ')'), help_text='In Japanese characters.', max_length=100, null=True)
 
     birthday = models.DateField(_('Birthday'), null=True, help_text='The year is not used, so write whatever')
 
@@ -420,8 +421,8 @@ class Member(MagiModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
-        return unicode(self.t_name)
+    def __str__(self):
+        return str(self.t_name)
 
     ############################################################
     # Meta
@@ -435,7 +436,7 @@ class Member(MagiModel):
 class Card(MagiModel):
     collection_name = 'card'
 
-    owner = models.ForeignKey(User, related_name='added_cards')
+    owner = models.ForeignKey(User, related_name='added_cards', on_delete=models.CASCADE)
     id = models.PositiveIntegerField(_('ID'), unique=True, primary_key=True, db_index=True)
     member = models.ForeignKey(Member, verbose_name=_('Member'), related_name='cards', null=True, on_delete=models.SET_NULL, db_index=True)
 
@@ -476,7 +477,7 @@ class Card(MagiModel):
     NAME_SOURCE_LANGUAGES = ['ja']
     NAMES_CHOICES = ALT_LANGUAGES_EXCEPT_JP
     d_names = models.TextField(_('Title'), null=True)
-    japanese_name = models.CharField(string_concat(_('Title'), ' (', t['Japanese'], ')'), max_length=100, null=True)
+    japanese_name = models.CharField(format_lazy('{}{}{}{}', _('Title'), ' (', t['Japanese'], ')'), max_length=100, null=True)
 
     VERSIONS = Account.VERSIONS
     VERSIONS_CHOICES = Account.VERSION_CHOICES
@@ -614,14 +615,14 @@ class Card(MagiModel):
     SPECIAL_CASES_VARIABLES = make_SPECIAL_CASES_VARIABLES(SKILL_TYPES, SKILL_SPECIAL_CHOICES)
 
     TEMPLATE_PER_SKILL_TYPES = {
-        'skill': { _skill_type: unicode(_info['template']) for _skill_type, _info in SKILL_TYPES.items() },
-        'side_skill': { _skill_type: unicode(_info['side_template']) for _skill_type, _info in SKILL_TYPES.items() },
+        'skill': { _skill_type: str(_info['template']) for _skill_type, _info in SKILL_TYPES.items() },
+        'side_skill': { _skill_type: str(_info['side_template']) for _skill_type, _info in SKILL_TYPES.items() },
     }
 
     def make_SPECIAL_CASES_TEMPLATE(SKILL_TYPES, SKILL_SPECIAL_CHOICES):
         return {
             _skill_type: {
-                _i: unicode(_info['special_templates'][_k]) for _i, _k in enumerate([_c[0] for _c in SKILL_SPECIAL_CHOICES]) if _k in _info['special_templates']
+                _i: str(_info['special_templates'][_k]) for _i, _k in enumerate([_c[0] for _c in SKILL_SPECIAL_CHOICES]) if _k in _info['special_templates']
             } for _skill_type, _info in SKILL_TYPES.items() if 'special_templates' in _info
         }
     SPECIAL_CASES_TEMPLATE = make_SPECIAL_CASES_TEMPLATE(SKILL_TYPES, SKILL_SPECIAL_CHOICES)
@@ -629,7 +630,7 @@ class Card(MagiModel):
     # Main skill
 
     skill_name = models.CharField(_('Skill name'), max_length=100, null=True)
-    japanese_skill_name = models.CharField(string_concat(_('Skill name'), ' (', t['Japanese'], ')'), max_length=100, null=True)
+    japanese_skill_name = models.CharField(format_lazy('{}{}{}{}', _('Skill name'), ' (', t['Japanese'], ')'), max_length=100, null=True)
     SKILL_NAME_SOURCE_LANGUAGES = ['ja']
     SKILL_NAMES_CHOICES = ALT_LANGUAGES_EXCEPT_JP
     d_skill_names = models.TextField(_('Skill name'), null=True)
@@ -729,9 +730,9 @@ class Card(MagiModel):
 
     SKILL_INFLUENCE_FIRST_BAND_ID = 501
     SKILL_INFLUENCE_CHOICES = OrderedDict(ATTRIBUTE_CHOICES +
-        [(SKILL_INFLUENCE_FIRST_BAND_ID + i, band) for i, band in enumerate(Member.BAND_CHOICES)])
+        [(i, band) for i, band in enumerate(Member.BAND_CHOICES, SKILL_INFLUENCE_FIRST_BAND_ID)])
     SKILL_INFLUENCE_WITHOUT_I_CHOICES = True
-    i_skill_influence = models.PositiveIntegerField('{influence}', null=True, choices=SKILL_INFLUENCE_CHOICES.iteritems())
+    i_skill_influence = models.PositiveIntegerField('{influence}', null=True, choices=list(SKILL_INFLUENCE_CHOICES.items()))
 
     @property
     def skill_influence(self):
@@ -743,10 +744,10 @@ class Card(MagiModel):
         return enum
 
     # Images
-    image = models.ImageField(_('Icon'), upload_to=uploadItem('c'), null=True)
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('c'))
-    image_trained = models.ImageField(string_concat(_('Icon'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/a'), null=True)
-    _original_image_trained = models.ImageField(null=True, upload_to=uploadTiny('c/a'))
+    image = models.ImageField(_('Icon'), upload_to=uploadItem('c'), null=True, max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('c'), max_length=255)
+    image_trained = models.ImageField(format_lazy('{}{}{}{}', _('Icon'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/a'), null=True, max_length=255)
+    _original_image_trained = models.ImageField(null=True, upload_to=uploadTiny('c/a'), max_length=255)
 
     tinypng_settings = {
         'art': {
@@ -759,36 +760,36 @@ class Card(MagiModel):
         },
     }
 
-    art = models.ImageField(_('Art'), upload_to=uploadItem('c/art'), null=True)
-    _original_art = models.ImageField(null=True, upload_to=uploadTiny('c/art'))
-    _tthumbnail_art = models.ImageField(null=True, upload_to=uploadTthumb('c/art'))
-    _2x_art = models.ImageField(null=True, upload_to=upload2x('c/art'))
+    art = models.ImageField(_('Art'), upload_to=uploadItem('c/art'), null=True, max_length=255)
+    _original_art = models.ImageField(null=True, upload_to=uploadTiny('c/art'), max_length=255)
+    _tthumbnail_art = models.ImageField(null=True, upload_to=uploadTthumb('c/art'), max_length=255)
+    _2x_art = models.ImageField(null=True, upload_to=upload2x('c/art'), max_length=255)
     show_art_on_homepage = models.BooleanField(default=True)
 
-    art_trained = models.ImageField(string_concat(_('Art'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/art/a'), null=True)
-    _original_art_trained = models.ImageField(null=True, upload_to=uploadTiny('c/art/a'))
-    _tthumbnail_art_trained = models.ImageField(null=True, upload_to=uploadTthumb('c/art/a'))
-    _2x_art_trained = models.ImageField(null=True, upload_to=upload2x('c/art/a'))
+    art_trained = models.ImageField(format_lazy('{}{}{}{}', _('Art'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/art/a'), null=True, max_length=255)
+    _original_art_trained = models.ImageField(null=True, upload_to=uploadTiny('c/art/a'), max_length=255)
+    _tthumbnail_art_trained = models.ImageField(null=True, upload_to=uploadTthumb('c/art/a'), max_length=255)
+    _2x_art_trained = models.ImageField(null=True, upload_to=upload2x('c/art/a'), max_length=255)
     show_trained_art_on_homepage = models.BooleanField(default=True)
 
-    transparent = models.ImageField(_('Transparent'), upload_to=uploadItem('c/transparent'), null=True)
-    _tthumbnail_transparent = models.ImageField(null=True, upload_to=uploadTthumb('c/transparent'))
-    _2x_transparent = models.ImageField(null=True, upload_to=upload2x('c/transparent'))
+    transparent = models.ImageField(_('Transparent'), upload_to=uploadItem('c/transparent'), null=True, max_length=255)
+    _tthumbnail_transparent = models.ImageField(null=True, upload_to=uploadTthumb('c/transparent'), max_length=255)
+    _2x_transparent = models.ImageField(null=True, upload_to=upload2x('c/transparent'), max_length=255)
 
-    transparent_trained = models.ImageField(string_concat(_('Transparent'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/transparent/a'), null=True)
-    _tthumbnail_transparent_trained = models.ImageField(null=True, upload_to=uploadTthumb('c/transparent/a'))
-    _2x_transparent_trained = models.ImageField(null=True, upload_to=upload2x('c/transparent/a'))
+    transparent_trained = models.ImageField(format_lazy('{}{}{}{}', _('Transparent'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/transparent/a'), null=True, max_length=255)
+    _tthumbnail_transparent_trained = models.ImageField(null=True, upload_to=uploadTthumb('c/transparent/a'), max_length=255)
+    _2x_transparent_trained = models.ImageField(null=True, upload_to=upload2x('c/transparent/a'), max_length=255)
 
     # Statistics
-    performance_min = models.PositiveIntegerField(string_concat(_('Performance'), ' (', _('Minimum'), ')'), default=0)
-    performance_max = models.PositiveIntegerField(string_concat(_('Performance'), ' (', _('Maximum'), ')'), default=0)
-    performance_trained_max = models.PositiveIntegerField(string_concat(_('Performance'), ' (', _('Trained'), ', ', _('Maximum'), ')'), default=0)
-    technique_min = models.PositiveIntegerField(string_concat(_('Technique'), ' (', _('Minimum'), ')'), default=0)
-    technique_max = models.PositiveIntegerField(string_concat(_('Technique'), ' (', _('Maximum'), ')'), default=0)
-    technique_trained_max = models.PositiveIntegerField(string_concat(_('Technique'), ' (', _('Trained'), ', ', _('Maximum'), ')'), default=0)
-    visual_min = models.PositiveIntegerField(string_concat(_('Visual'), ' (', _('Minimum'), ')'), default=0)
-    visual_max = models.PositiveIntegerField(string_concat(_('Visual'), ' (', _('Maximum'), ')'), default=0)
-    visual_trained_max = models.PositiveIntegerField(string_concat(_('Visual'), ' (', _('Trained'), ', ', _('Maximum'), ')'), default=0)
+    performance_min = models.PositiveIntegerField(format_lazy('{}{}{}{}', _('Performance'), ' (', _('Minimum'), ')'), default=0)
+    performance_max = models.PositiveIntegerField(format_lazy('{}{}{}{}', _('Performance'), ' (', _('Maximum'), ')'), default=0)
+    performance_trained_max = models.PositiveIntegerField(format_lazy('{}{}{}{}{}{}', _('Performance'), ' (', _('Trained'), ', ', _('Maximum'), ')'), default=0)
+    technique_min = models.PositiveIntegerField(format_lazy('{}{}{}{}', _('Technique'), ' (', _('Minimum'), ')'), default=0)
+    technique_max = models.PositiveIntegerField(format_lazy('{}{}{}{}', _('Technique'), ' (', _('Maximum'), ')'), default=0)
+    technique_trained_max = models.PositiveIntegerField(format_lazy('{}{}{}{}{}{}', _('Technique'), ' (', _('Trained'), ', ', _('Maximum'), ')'), default=0)
+    visual_min = models.PositiveIntegerField(format_lazy('{}{}{}{}', _('Visual'), ' (', _('Minimum'), ')'), default=0)
+    visual_max = models.PositiveIntegerField(format_lazy('{}{}{}{}', _('Visual'), ' (', _('Maximum'), ')'), default=0)
+    visual_trained_max = models.PositiveIntegerField(format_lazy('{}{}{}{}{}{}', _('Visual'), ' (', _('Trained'), ', ', _('Maximum'), ')'), default=0)
 
     @property
     def overall_min(self):
@@ -894,7 +895,7 @@ class Card(MagiModel):
         return {
             'id': self.member_id,
             'names': names,
-            'image': unicode(self.member.square_image),
+            'image': str(self.member.square_image),
         }
 
     # Cache events
@@ -919,7 +920,7 @@ class Card(MagiModel):
             events.append({
                 'id': event.id,
                 'names': names,
-                'image': unicode(event.image),
+                'image': str(event.image),
             })
         return events if events else None
 
@@ -945,7 +946,7 @@ class Card(MagiModel):
             gachas.append({
                 'id': gacha.id,
                 'names': names,
-                'image': unicode(gacha.image),
+                'image': str(gacha.image),
             })
         return gachas if gachas else None
 
@@ -959,9 +960,9 @@ class Card(MagiModel):
     def to_cache_cameos(self):
         return [{
             'id': cameo.id,
-            'name': unicode(cameo.name),
-            'japanese_name': unicode(cameo.japanese_name),
-            'image': unicode(cameo.square_image),
+            'name': str(cameo.name),
+            'japanese_name': str(cameo.japanese_name),
+            'image': str(cameo.square_image),
         } for cameo in self.cameo_members.all()]
 
     @classmethod
@@ -1004,7 +1005,7 @@ class Card(MagiModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
+    def __str__(self):
         if self.id:
             return u'{rarity} {member_name} - {attribute}{name}'.format(
                 rarity=self.t_rarity,
@@ -1026,13 +1027,13 @@ class Card(MagiModel):
 class CollectibleCard(AccountAsOwnerModel):
     collection_name = 'collectiblecard'
 
-    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='cardscollectors')
-    card = models.ForeignKey(Card, verbose_name=_('Card'), related_name='collectedcards')
+    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='cardscollectors', on_delete=models.CASCADE)
+    card = models.ForeignKey(Card, verbose_name=_('Card'), related_name='collectedcards', on_delete=models.CASCADE)
     trained = models.BooleanField(_('Trained'), default=False)
     prefer_untrained = models.BooleanField(_('Prefer untrained card image'), default=False)
-    max_leveled = models.NullBooleanField(_('Max level'))
-    first_episode = models.NullBooleanField(_('{nth} episode').format(nth=_('1st')))
-    memorial_episode = models.NullBooleanField(_('Memorial episode'))
+    max_leveled = models.BooleanField(_('Max level'), null=True)
+    first_episode = models.BooleanField(_('{nth} episode').format(nth=_('1st')), null=True)
+    memorial_episode = models.BooleanField(_('Memorial episode'), null=True)
     skill_level = models.PositiveIntegerField(_('Skill level'), null=True, blank=True, validators=[
         MinValueValidator(1),
         MaxValueValidator(5),
@@ -1075,15 +1076,15 @@ class CollectibleCard(AccountAsOwnerModel):
         if self.card.skill_duration:
             self.previous_duration = self.card.skill_duration
             self.card.skill_duration = self.card.skill_duration + (((self.skill_level or 1) - 1) * 0.5)
-        full_skill = unicode(self.card.full_skill)
+        full_skill = str(self.card.full_skill)
         if self.card.skill_duration:
             self.card.skill_duration = self.previous_duration
         return full_skill
 
-    def __unicode__(self):
+    def __str__(self):
         if self.id:
-            return unicode(self.card)
-        return super(CollectibleCard, self).__unicode__()
+            return str(self.card)
+        return super(CollectibleCard, self).__str__()
 
     class Meta:
         ordering = ['-card__i_rarity', '-trained', '-card__release_date']
@@ -1091,8 +1092,8 @@ class CollectibleCard(AccountAsOwnerModel):
 class FavoriteCard(MagiModel):
     collection_name = 'favoritecard'
 
-    owner = models.ForeignKey(User, related_name='favorite_cards')
-    card = models.ForeignKey(Card, verbose_name=_('Card'), related_name='favorited')
+    owner = models.ForeignKey(User, related_name='favorite_cards', on_delete=models.CASCADE)
+    card = models.ForeignKey(Card, verbose_name=_('Card'), related_name='favorited', on_delete=models.CASCADE)
 
     class Meta:
         unique_together = (('owner', 'card'), )
@@ -1124,14 +1125,14 @@ def _event_gacha_top_image(item, image_name='image'):
 class Event(MagiModel):
     collection_name = 'event'
 
-    owner = models.ForeignKey(User, related_name='added_events')
+    owner = models.ForeignKey(User, related_name='added_events', on_delete=models.CASCADE)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('e'), null=True)
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('e'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('e'), null=True, max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('e'), max_length=255)
     top_image = property(_event_gacha_top_image)
 
     name = models.CharField(_('Title'), max_length=100, unique=True)
-    japanese_name = models.CharField(string_concat(_('Title'), ' (', t['Japanese'], ')'), max_length=100, unique=True)
+    japanese_name = models.CharField(format_lazy('{}{}{}{}', _('Title'), ' (', t['Japanese'], ')'), max_length=100, unique=True)
     NAMES_CHOICES = ALT_LANGUAGES_EXCEPT_JP
     NAME_SOURCE_LANGUAGES = ['ja']
     d_names = models.TextField(_('Title'), null=True)
@@ -1155,8 +1156,8 @@ class Event(MagiModel):
         'live_goals',
     ]
 
-    start_date = models.DateTimeField(string_concat(_('Japanese version'), ' - ', _('Beginning')), null=True)
-    end_date = models.DateTimeField(string_concat(_('Japanese version'), ' - ',_('End')), null=True)
+    start_date = models.DateTimeField(format_lazy('{}{}{}', _('Japanese version'), ' - ', _('Beginning')), null=True)
+    end_date = models.DateTimeField(format_lazy('{}{}{}', _('Japanese version'), ' - ',_('End')), null=True)
 
     TIMES_PER_VERSIONS = {
         'JP': ((6, 0), (11, 59)),
@@ -1178,20 +1179,20 @@ class Event(MagiModel):
     VERSIONS_CHOICES = Account.VERSION_CHOICES
     c_versions = models.TextField(_('Server availability'), blank=True, null=True, default='"JP"')
 
-    english_image = models.ImageField(string_concat(_('English version'), ' - ', _('Image')), upload_to=uploadItem('e/e'), null=True)
-    _original_english_image = models.ImageField(null=True, upload_to=uploadTiny('e/e'))
-    english_start_date = models.DateTimeField(string_concat(_('English version'), ' - ', _('Beginning')), null=True)
-    english_end_date = models.DateTimeField(string_concat(_('English version'), ' - ', _('End')), null=True)
+    english_image = models.ImageField(format_lazy('{}{}{}', _('English version'), ' - ', _('Image')), upload_to=uploadItem('e/e'), null=True, max_length=255)
+    _original_english_image = models.ImageField(null=True, upload_to=uploadTiny('e/e'), max_length=255)
+    english_start_date = models.DateTimeField(format_lazy('{}{}{}', _('English version'), ' - ', _('Beginning')), null=True)
+    english_end_date = models.DateTimeField(format_lazy('{}{}{}', _('English version'), ' - ', _('End')), null=True)
 
-    taiwanese_image = models.ImageField(string_concat(_('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('e/t'),  null=True)
-    _original_taiwanese_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'))
-    taiwanese_start_date = models.DateTimeField(string_concat(_('Taiwanese version'), ' - ', _('Beginning')), null=True)
-    taiwanese_end_date = models.DateTimeField(string_concat(_('Taiwanese version'), ' - ', _('End')), null=True)
+    taiwanese_image = models.ImageField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('e/t'),  null=True, max_length=255)
+    _original_taiwanese_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'), max_length=255)
+    taiwanese_start_date = models.DateTimeField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Beginning')), null=True)
+    taiwanese_end_date = models.DateTimeField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('End')), null=True)
 
-    korean_image = models.ImageField(string_concat(_('Korean version'), ' - ', _('Image')), upload_to=uploadItem('e/t'),  null=True)
-    _original_korean_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'))
-    korean_start_date = models.DateTimeField(string_concat(_('Korean version'), ' - ', _('Beginning')), null=True)
-    korean_end_date = models.DateTimeField(string_concat(_('Korean version'), ' - ', _('End')), null=True)
+    korean_image = models.ImageField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Image')), upload_to=uploadItem('e/t'),  null=True, max_length=255)
+    _original_korean_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'), max_length=255)
+    korean_start_date = models.DateTimeField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Beginning')), null=True)
+    korean_end_date = models.DateTimeField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('End')), null=True)
 
     MAIN_CARD_ALLOWED_RARITIES = (3, 4)
     SECONDARY_CARD_ALLOWED_RARITIES = (2, 3, 4)
@@ -1220,7 +1221,7 @@ class Event(MagiModel):
     @property
     def cached_gacha(self):
         # No need for a cache because the gacha is select_related in item view
-        self.gacha.unicode = unicode(self.gacha)
+        self.gacha.unicode = str(self.gacha)
         return self.gacha
 
     def get_status(self, version='JP'):
@@ -1249,7 +1250,7 @@ class Event(MagiModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
+    def __str__(self):
         return self.t_name
 
     ############################################################
@@ -1264,8 +1265,8 @@ class Event(MagiModel):
 class EventParticipation(AccountAsOwnerModel):
     collection_name = 'eventparticipation'
 
-    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='events')
-    event = models.ForeignKey(Event, verbose_name=_('Event'), related_name='participations')
+    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='events', on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, verbose_name=_('Event'), related_name='participations', on_delete=models.CASCADE)
 
     score = models.PositiveIntegerField(_('Score'), null=True)
     ranking = models.PositiveIntegerField(_('Ranking'), null=True)
@@ -1273,11 +1274,11 @@ class EventParticipation(AccountAsOwnerModel):
     song_score = models.PositiveIntegerField(_('Song score'), null=True)
     song_ranking = models.PositiveIntegerField(_('Song ranking'), null=True)
 
-    is_goal_master = models.NullBooleanField(_('Goal Master'))
-    is_ex_goal_master = models.NullBooleanField(_('EX Goal Master'))
+    is_goal_master = models.BooleanField(_('Goal Master'), null=True)
+    is_ex_goal_master = models.BooleanField(_('EX Goal Master'), null=True)
 
-    screenshot = models.ImageField(_('Screenshot'), upload_to=uploadItem('event_screenshot'), null=True)
-    _thumbnail_screenshot = models.ImageField(null=True, upload_to=uploadThumb('event_screenshot'))
+    screenshot = models.ImageField(_('Screenshot'), upload_to=uploadItem('event_screenshot'), null=True, max_length=255)
+    _thumbnail_screenshot = models.ImageField(null=True, upload_to=uploadThumb('event_screenshot'), max_length=255)
 
     @property
     def ranking_image_url(self):
@@ -1337,10 +1338,10 @@ class EventParticipation(AccountAsOwnerModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
+    def __str__(self):
         if self.id:
-            return unicode(self.event)
-        return super(EventParticipation, self).__unicode__()
+            return str(self.event)
+        return super(EventParticipation, self).__str__()
 
     ############################################################
     # Meta
@@ -1373,9 +1374,9 @@ class Song(MagiModel):
         ('arranger', _('Arranger')),
     ]
 
-    owner = models.ForeignKey(User, related_name='added_songs')
-    image = models.ImageField('Album cover', upload_to=uploadItem('s'))
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('s'))
+    owner = models.ForeignKey(User, related_name='added_songs', on_delete=models.CASCADE)
+    image = models.ImageField('Album cover', upload_to=uploadItem('s'), max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('s'), max_length=255)
 
     BAND_CHOICES = list(Member.BAND_CHOICES) + ['Glitter*Green', 'Special Band']
     i_band = models.PositiveIntegerField(_('Band'), choices=i_choices(BAND_CHOICES))
@@ -1385,8 +1386,8 @@ class Song(MagiModel):
     d_special_bands = models.TextField(_('Band'), null=True)
 
     japanese_name = models.CharField(_('Title'), max_length=100, unique=True)
-    romaji_name = models.CharField(string_concat(_('Title'), ' (', _('Romaji'), ')'), max_length=100, null=True)
-    name = models.CharField(string_concat(_('Title'), ' (', _('Translation'), ')'), max_length=100, null=True)
+    romaji_name = models.CharField(format_lazy('{}{}{}{}', _('Title'), ' (', _('Romaji'), ')'), max_length=100, null=True)
+    name = models.CharField(format_lazy('{}{}{}{}', _('Title'), ' (', _('Translation'), ')'), max_length=100, null=True)
     NAMES_CHOICES = ALT_LANGUAGES_EXCEPT_JP
     NAME_SOURCE_LANGUAGES = ['ja']
     d_names = models.TextField(_('Title'), null=True)
@@ -1411,21 +1412,21 @@ class Song(MagiModel):
     lyricist = models.CharField(_('Lyricist'), max_length=100, null=True)
     arranger = models.CharField(_('Arranger'), max_length=100, null=True)
 
-    easy_notes = models.PositiveIntegerField(string_concat(_('Easy'), ' - ', _('Notes')), null=True)
-    easy_difficulty = models.PositiveIntegerField(string_concat(_('Easy'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
-    normal_notes = models.PositiveIntegerField(string_concat(_('Normal'), ' - ', _('Notes')), null=True)
-    normal_difficulty = models.PositiveIntegerField(string_concat(_('Normal'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
-    hard_notes = models.PositiveIntegerField(string_concat(_('Hard'), ' - ', _('Notes')), null=True)
-    hard_difficulty = models.PositiveIntegerField(string_concat(_('Hard'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
-    expert_notes = models.PositiveIntegerField(string_concat(_('Expert'), ' - ', _('Notes')), null=True)
-    expert_difficulty = models.PositiveIntegerField(string_concat(_('Expert'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
-    special_notes = models.PositiveIntegerField(string_concat(_('Special'), ' - ', _('Notes')), null=True)
-    special_difficulty = models.PositiveIntegerField(string_concat(_('Special'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
+    easy_notes = models.PositiveIntegerField(format_lazy('{}{}{}', _('Easy'), ' - ', _('Notes')), null=True)
+    easy_difficulty = models.PositiveIntegerField(format_lazy('{}{}{}', _('Easy'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
+    normal_notes = models.PositiveIntegerField(format_lazy('{}{}{}', _('Normal'), ' - ', _('Notes')), null=True)
+    normal_difficulty = models.PositiveIntegerField(format_lazy('{}{}{}', _('Normal'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
+    hard_notes = models.PositiveIntegerField(format_lazy('{}{}{}', _('Hard'), ' - ', _('Notes')), null=True)
+    hard_difficulty = models.PositiveIntegerField(format_lazy('{}{}{}', _('Hard'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
+    expert_notes = models.PositiveIntegerField(format_lazy('{}{}{}', _('Expert'), ' - ', _('Notes')), null=True)
+    expert_difficulty = models.PositiveIntegerField(format_lazy('{}{}{}', _('Expert'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
+    special_notes = models.PositiveIntegerField(format_lazy('{}{}{}', _('Special'), ' - ', _('Notes')), null=True)
+    special_difficulty = models.PositiveIntegerField(format_lazy('{}{}{}', _('Special'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
 
     UNLOCK = OrderedDict([
         ('gift', {
             'translation': _('Gift'),
-            'template': string_concat(_('Gift'), ' ({occasion})'),
+            'template': format_lazy('{}{}', _('Gift'), ' ({occasion})'),
             'variables': ['occasion'],
         }),
         ('purchase', {
@@ -1459,8 +1460,8 @@ class Song(MagiModel):
             'variables': ['level'],
         }),
         ('level_band', {
-            'translation': string_concat(_('Level'), ' / ', _('Band')),
-            'template': string_concat('{band} - ', _('Level {level}')),
+            'translation': format_lazy('{}{}{}', _('Level'), ' / ', _('Band')),
+            'template': format_lazy('{}{}', '{band} - ', _('Level {level}')),
             'variables': ['level', 'band'],
             'variables_transform': {
                 'band': lambda _s, _v: Member.get_verbose_i('band', int(_v)),
@@ -1482,7 +1483,7 @@ class Song(MagiModel):
     unlock_template = property(getInfoFromChoices('unlock', UNLOCK, 'template'))
     @property
     def unlock_sentence(self):
-        return unicode(self.unlock_template).format(**{
+        return str(self.unlock_template).format(**{
             k: (self.unlock_variables_transform or {}).get(k, lambda s, v: v)(self, v)
             for k, v in zip(self.unlock_variables_keys, self.unlock_variables)
         })
@@ -1492,7 +1493,7 @@ class Song(MagiModel):
     @property
     def cached_event(self):
         # No need for a cache because the event is select_related in item view
-        self.event.unicode = unicode(self.event)
+        self.event.unicode = str(self.event)
         return self.event
 
     @property # Needed to use with types in magicollections
@@ -1515,7 +1516,7 @@ class Song(MagiModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
+    def __str__(self):
         if get_language() == 'ja':
             return self.japanese_name
         if not self.romaji_name:
@@ -1546,8 +1547,8 @@ class Song(MagiModel):
 class PlayedSong(AccountAsOwnerModel):
     collection_name = 'playedsong'
 
-    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='playedsong')
-    song = models.ForeignKey(Song, verbose_name=_('Song'), related_name='playedby')
+    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='playedsong', on_delete=models.CASCADE)
+    song = models.ForeignKey(Song, verbose_name=_('Song'), related_name='playedby', on_delete=models.CASCADE)
 
     DIFFICULTY_CHOICES = (
         ('easy', _('Easy')),
@@ -1561,11 +1562,11 @@ class PlayedSong(AccountAsOwnerModel):
     difficulty_image_url = property(lambda _ps: staticImageURL(_ps.difficulty, folder=u'songs', extension='png'))
 
     score = models.PositiveIntegerField(_('Score'), null=True)
-    full_combo = models.NullBooleanField(_('Full combo'))
-    all_perfect = models.NullBooleanField(_('All perfect'))
+    full_combo = models.BooleanField(_('Full combo'), null=True)
+    all_perfect = models.BooleanField(_('All perfect'), null=True)
 
-    screenshot = models.ImageField(_('Screenshot'), upload_to=uploadItem('song_screenshot'), null=True)
-    _thumbnail_screenshot = models.ImageField(null=True, upload_to=uploadThumb('song_screenshot'))
+    screenshot = models.ImageField(_('Screenshot'), upload_to=uploadItem('song_screenshot'), null=True, max_length=255)
+    _thumbnail_screenshot = models.ImageField(null=True, upload_to=uploadThumb('song_screenshot'), max_length=255)
 
     @property
     def image(self):
@@ -1602,10 +1603,10 @@ class PlayedSong(AccountAsOwnerModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
+    def __str__(self):
         if self.id:
-            return unicode(self.song)
-        return super(PlayedSong, self).__unicode__()
+            return str(self.song)
+        return super(PlayedSong, self).__str__()
 
     ############################################################
     # Meta
@@ -1619,14 +1620,14 @@ class PlayedSong(AccountAsOwnerModel):
 class Gacha(MagiModel):
     collection_name = 'gacha'
 
-    owner = models.ForeignKey(User, related_name='added_gacha')
+    owner = models.ForeignKey(User, related_name='added_gacha', on_delete=models.CASCADE)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('g'), null=True)
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('g'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('g'), null=True, max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('g'), max_length=255)
     top_image = property(_event_gacha_top_image)
 
     name = models.CharField(_('Title'), max_length=100, unique=True)
-    japanese_name = models.CharField(string_concat(_('Title'), ' (', t['Japanese'], ')'), max_length=100, unique=True)
+    japanese_name = models.CharField(format_lazy('{}{}{}{}', _('Title'), ' (', t['Japanese'], ')'), max_length=100, unique=True)
     NAMES_CHOICES = ALT_LANGUAGES_EXCEPT_JP
     NAME_SOURCE_LANGUAGES = ['ja']
     d_names = models.TextField(_('Title'), null=True)
@@ -1637,20 +1638,20 @@ class Gacha(MagiModel):
     start_date = models.DateTimeField(_('Beginning'), null=True)
     end_date = models.DateTimeField(_('End'), null=True)
 
-    english_image = models.ImageField(string_concat(_('English version'), ' - ', _('Image')), upload_to=uploadItem('e/e'), null=True)
-    _original_english_image = models.ImageField(null=True, upload_to=uploadTiny('e/e'))
-    english_start_date = models.DateTimeField(string_concat(_('English version'), ' - ', _('Beginning')), null=True)
-    english_end_date = models.DateTimeField(string_concat(_('English version'), ' - ', _('End')), null=True)
+    english_image = models.ImageField(format_lazy('{}{}{}', _('English version'), ' - ', _('Image')), upload_to=uploadItem('e/e'), null=True, max_length=255)
+    _original_english_image = models.ImageField(null=True, upload_to=uploadTiny('e/e'), max_length=255)
+    english_start_date = models.DateTimeField(format_lazy('{}{}{}', _('English version'), ' - ', _('Beginning')), null=True)
+    english_end_date = models.DateTimeField(format_lazy('{}{}{}', _('English version'), ' - ', _('End')), null=True)
 
-    taiwanese_image = models.ImageField(string_concat(_('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('e/t'), null=True)
-    _original_taiwanese_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'))
-    taiwanese_start_date = models.DateTimeField(string_concat(_('Taiwanese version'), ' - ', _('Beginning')), null=True)
-    taiwanese_end_date = models.DateTimeField(string_concat(_('Taiwanese version'), ' - ', _('End')), null=True)
+    taiwanese_image = models.ImageField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('e/t'), null=True, max_length=255)
+    _original_taiwanese_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'), max_length=255)
+    taiwanese_start_date = models.DateTimeField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Beginning')), null=True)
+    taiwanese_end_date = models.DateTimeField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('End')), null=True)
 
-    korean_image = models.ImageField(string_concat(_('Korean version'), ' - ', _('Image')), upload_to=uploadItem('e/t'), null=True)
-    _original_korean_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'))
-    korean_start_date = models.DateTimeField(string_concat(_('Korean version'), ' - ', _('Beginning')), null=True)
-    korean_end_date = models.DateTimeField(string_concat(_('Korean version'), ' - ', _('End')), null=True)
+    korean_image = models.ImageField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Image')), upload_to=uploadItem('e/t'), null=True, max_length=255)
+    _original_korean_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'), max_length=255)
+    korean_start_date = models.DateTimeField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Beginning')), null=True)
+    korean_end_date = models.DateTimeField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('End')), null=True)
 
     ATTRIBUTE_CHOICES = Card.ATTRIBUTE_CHOICES
     ATTRIBUTE_WITHOUT_I_CHOICES = True
@@ -1681,7 +1682,7 @@ class Gacha(MagiModel):
     @property
     def cached_event(self):
         # No need for a cache because the event is select_related in item view
-        self.event.unicode = unicode(self.event)
+        self.event.unicode = str(self.event)
         return self.event
 
     def get_status(self, version='JP'):
@@ -1697,7 +1698,7 @@ class Gacha(MagiModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
+    def __str__(self):
         return _('{} Gacha').format(self.t_name)
 
     ############################################################
@@ -1713,8 +1714,8 @@ class Gacha(MagiModel):
 class Rerun(MagiModel):
     collection_name = 'rerun'
 
-    event = models.ForeignKey(Event, verbose_name=_('Event'), related_name='reruns', null=True)
-    gacha = models.ForeignKey(Gacha, verbose_name=_('Gacha'), related_name='reruns', null=True)
+    event = models.ForeignKey(Event, verbose_name=_('Event'), related_name='reruns', null=True, on_delete=models.CASCADE)
+    gacha = models.ForeignKey(Gacha, verbose_name=_('Gacha'), related_name='reruns', null=True, on_delete=models.CASCADE)
 
     ITEMS = ['event', 'gacha']
     ITEMS_MODELS = { 'event': Event, 'gacha': Gacha }
@@ -1742,7 +1743,7 @@ class Rerun(MagiModel):
     def status(self):
         return getEventStatus(self.start_date, self.end_date)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'Rerun {} "{}" ({}): {} - {}'.format(
             'Gacha' if self.gacha_id else 'Event',
             self.gacha or self.event,
@@ -1756,10 +1757,10 @@ class Rerun(MagiModel):
 
 class Item(MagiModel):
     collection_name = 'item'
-    owner = models.ForeignKey(User, related_name='added_items')
+    owner = models.ForeignKey(User, related_name='added_items', on_delete=models.CASCADE)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('items'))
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('items'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('items'), max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('items'), max_length=255)
 
     name = models.CharField(_('Title'), max_length=100, null=True, help_text='plural')
     NAMES_CHOICES = ALL_ALT_LANGUAGES
@@ -1777,7 +1778,7 @@ class Item(MagiModel):
     M_DESCRIPTIONS_CHOICES = ALL_ALT_LANGUAGES
     d_m_descriptions = models.TextField(_('Description'), null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.t_name
 
     class Meta:
@@ -1789,8 +1790,8 @@ class Item(MagiModel):
 class CollectibleItem(AccountAsOwnerModel):
     collection_name = 'collectibleitem'
 
-    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='items')
-    item = models.ForeignKey(Item, verbose_name=_('Item'), related_name='collectedby')
+    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='items', on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, verbose_name=_('Item'), related_name='collectedby', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(_('Quantity'), default=1)
 
     image = property(lambda _s: _s.item.image)
@@ -1801,10 +1802,10 @@ class CollectibleItem(AccountAsOwnerModel):
     def subtitle(self):
         return u'x{}'.format(self.quantity)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.id:
-            return unicode(self.item)
-        return super(CollectibleItem, self).__unicode__()
+            return str(self.item)
+        return super(CollectibleItem, self).__str__()
 
 ############################################################
 # Area item
@@ -1812,24 +1813,24 @@ class CollectibleItem(AccountAsOwnerModel):
 class Area(MagiModel):
     collection_name = 'area'
 
-    owner = models.ForeignKey(User, related_name='added_areas')
+    owner = models.ForeignKey(User, related_name='added_areas', on_delete=models.CASCADE)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('areas'))
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('areas'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('areas'), max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('areas'), max_length=255)
 
     name = models.CharField(_('Title'), max_length=100)
     NAMES_CHOICES = ALL_ALT_LANGUAGES
     d_names = models.TextField(_('Title'), null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.t_name
 
 class AreaItem(MagiModel):
     collection_name = 'areaitem'
-    owner = models.ForeignKey(User, related_name='added_area_items')
+    owner = models.ForeignKey(User, related_name='added_area_items', on_delete=models.CASCADE)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('areas/items'))
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('areas/items'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('areas/items'), max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('areas/items'), max_length=255)
 
     name = models.CharField(_('Title'), max_length=100, null=True)
     NAMES_CHOICES = ALL_ALT_LANGUAGES
@@ -1928,8 +1929,8 @@ class AreaItem(MagiModel):
     @property
     def stat(self):
         if self.i_boost_stat is not None:
-            return unicode(self.t_boost_stat)
-        return unicode(_('All'))
+            return str(self.t_boost_stat)
+        return str(_('All'))
 
     def formatted_description(self, level=1):
         if level > len(self.value_list or ''):
@@ -1937,7 +1938,7 @@ class AreaItem(MagiModel):
         else:
             value = self.value_list[level-1]
         if self.is_percent:
-            value = string_concat(value, '%')
+            value = format_lazy('{}{}', value, '%')
         if level > len(self.life_list or ''):
             life = '???'
         else:
@@ -1948,7 +1949,7 @@ class AreaItem(MagiModel):
         return _('{affected} members get a {value} boost on {stat} statistics').format(
             affected=self.affected, value=value, stat=self.stat)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.formatted_name
 
 ############################################################
@@ -1957,8 +1958,8 @@ class AreaItem(MagiModel):
 class CollectibleAreaItem(AccountAsOwnerModel):
     collection_name = 'collectibleareaitem'
 
-    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='areaitems')
-    areaitem = models.ForeignKey(AreaItem, verbose_name=_('Area item'), related_name='collectedby')
+    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='areaitems', on_delete=models.CASCADE)
+    areaitem = models.ForeignKey(AreaItem, verbose_name=_('Area item'), related_name='collectedby', on_delete=models.CASCADE)
     level = models.PositiveIntegerField(_('Level'), default=1)
 
     image = property(lambda _s: _s.areaitem.image)
@@ -1974,10 +1975,10 @@ class CollectibleAreaItem(AccountAsOwnerModel):
     def subtitle(self):
         return _('Level {level}').format(level=self.level)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.id:
-            return unicode(self.areaitem)
-        return super(CollectibleAreaItem, self).__unicode__()
+            return str(self.areaitem)
+        return super(CollectibleAreaItem, self).__str__()
 
 ############################################################
 # Assets
@@ -1985,19 +1986,19 @@ class CollectibleAreaItem(AccountAsOwnerModel):
 class Asset(MagiModel):
     collection_name = 'asset'
 
-    owner = models.ForeignKey(User, related_name='added_assets')
+    owner = models.ForeignKey(User, related_name='added_assets', on_delete=models.CASCADE)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('asset'), null=True)
-    _tthumbnail_image = models.ImageField(null=True, upload_to=uploadTthumb('asset'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('asset'), null=True, max_length=255)
+    _tthumbnail_image = models.ImageField(null=True, upload_to=uploadTthumb('asset'), max_length=255)
 
-    english_image = models.ImageField(string_concat(_('English version'), ' - ', _('Image')), upload_to=uploadItem('asset/e'), null=True)
-    _tthumbnail_english_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/e'))
+    english_image = models.ImageField(format_lazy('{}{}{}', _('English version'), ' - ', _('Image')), upload_to=uploadItem('asset/e'), null=True, max_length=255)
+    _tthumbnail_english_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/e'), max_length=255)
 
-    taiwanese_image = models.ImageField(string_concat(_('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('asset/t'),  null=True)
-    _tthumbnail_taiwanese_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/t'))
+    taiwanese_image = models.ImageField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('asset/t'),  null=True, max_length=255)
+    _tthumbnail_taiwanese_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/t'), max_length=255)
 
-    korean_image = models.ImageField(string_concat(_('Korean version'), ' - ', _('Image')), upload_to=uploadItem('asset/k'),  null=True)
-    _tthumbnail_korean_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/k'))
+    korean_image = models.ImageField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Image')), upload_to=uploadItem('asset/k'),  null=True, max_length=255)
+    _tthumbnail_korean_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/k'), max_length=255)
 
     def _get_top_image(self, thumbnail):
         show_image_version = 'EN'
@@ -2094,8 +2095,8 @@ class Asset(MagiModel):
             'icon': 'pictures',
             'to_unicode': lambda _a: u' - '.join([_s for _s in [
                 _a.t_name,
-                unicode(_a.song) if _a.song else None,
-                unicode(_a.band) if _a.band else None,
+                str(_a.song) if _a.song else None,
+                str(_a.band) if _a.band else None,
                 u', '.join([member.first_name for member in getattr(_a, 'all_members', [])]) if not _a.band else '',
             ] if _s] or [
             ]) or _('Official art'),
@@ -2207,15 +2208,15 @@ class Asset(MagiModel):
     def display_name_in_list(self):
         return mark_safe(u'<br>'.join([escape(name) for name in self.to_unicode(self).split(' - ')]))
 
-    def __unicode__(self):
-        return unicode(self.to_unicode(self))
+    def __str__(self):
+        return str(self.to_unicode(self))
 
 ############################################################
 # Costume
 
 class Chibi(BaseMagiModel):
-    image = models.ImageField(upload_to=uploadItem('cos/chibi'))
-    _original_image = models.ImageField(upload_to=uploadTiny('cos/chibi'), null=True)
+    image = models.ImageField(upload_to=uploadItem('cos/chibi'), max_length=255)
+    _original_image = models.ImageField(upload_to=uploadTiny('cos/chibi'), null=True, max_length=255)
     costume = models.ForeignKey('Costume', verbose_name=_('Costume'), related_name='owned_chibis', on_delete=models.CASCADE)
 
     tinypng_settings = {
@@ -2225,12 +2226,12 @@ class Chibi(BaseMagiModel):
         },
     }
 
-    def __unicode__(self):
-        return unicode(self.image)
+    def __str__(self):
+        return str(self.image)
 
 class Costume(MagiModel):
     collection_name = 'costume'
-    owner = models.ForeignKey(User, related_name='added_costume')
+    owner = models.ForeignKey(User, related_name='added_costume', on_delete=models.CASCADE)
 
     COSTUME_TYPE_CHOICES = OrderedDict([
         # Costumes that can be used in lives. Usually associated with cards but
@@ -2256,8 +2257,8 @@ class Costume(MagiModel):
             return self.card.t_name or self.card.japanese_name
         return MagiModel.t_name.fget(self)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('cos/p'), null=True)
-    _tthumbnail_image = models.ImageField(null=True, upload_to=uploadTthumb('cos/z'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('cos/p'), null=True, max_length=255)
+    _tthumbnail_image = models.ImageField(null=True, upload_to=uploadTthumb('cos/z'), max_length=255)
     model_pkg = models.FileField(pgettext_lazy('BanPa model viewer', 'Model'), upload_to=uploadItem('cos/z'), null=True)
 
     @property
@@ -2289,7 +2290,7 @@ class Costume(MagiModel):
     card = models.OneToOneField(Card, verbose_name=_('Card'), related_name='associated_costume', null=True, on_delete=models.SET_NULL)
     # owned_chibis
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{}{}'.format(
             u'{} - '.format(self.member.t_name) if self.member_id else '',
             self.t_name,
@@ -2310,7 +2311,7 @@ class Costume(MagiModel):
     #     if not chibis:
     #         chibis = Chibi.objects.filter(costume=self)
     #     self._cache_chibis_ids = join_data(*[ image.id for image in chibis ])
-    #     self._cache_chibis_paths = join_data(*[ unicode(image) for image in chibis ])
+    #     self._cache_chibis_paths = join_data(*[ str(image) for image in chibis ])
 
     # def force_cache_chibis(self):
     #     self.update_cache_chibis()

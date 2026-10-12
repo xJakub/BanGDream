@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='card',
             name='live2d_screenshot',
-            field=models.ImageField(null=True, upload_to=magi.utils.uploadItem(b'c/l2d/s')),
+            field=models.ImageField(null=True, upload_to=magi.utils.uploadItem('c/l2d/s')),
             preserve_default=True,
         ),
         migrations.AddField(

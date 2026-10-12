@@ -15,19 +15,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='event',
             name='english_rare_stamp',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/stamps/en'), null=True, verbose_name='Rare stamp'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/stamps/en'), null=True, verbose_name='Rare stamp'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='event',
             name='korean_rare_stamp',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/stamps/kr'), null=True, verbose_name='Rare stamp'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/stamps/kr'), null=True, verbose_name='Rare stamp'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='event',
             name='taiwanese_rare_stamp',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/stamps/tw'), null=True, verbose_name='Rare stamp'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/stamps/tw'), null=True, verbose_name='Rare stamp'),
             preserve_default=True,
         ),
         migrations.AddField(

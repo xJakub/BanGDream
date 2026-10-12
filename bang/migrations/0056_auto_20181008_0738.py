@@ -46,9 +46,9 @@ class Migration(migrations.Migration):
             name='Chibi',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('image', models.ImageField(upload_to=magi.utils.uploadItem(b'cos/chibi'))),
-                ('_original_image', models.ImageField(null=True, upload_to=magi.utils.uploadTiny(b'cos/chibi'))),
-                ('costume', models.ForeignKey(related_name='owned_chibis', verbose_name='Costume', to='bang.Costume')),
+                ('image', models.ImageField(upload_to=magi.utils.uploadItem('cos/chibi'))),
+                ('_original_image', models.ImageField(null=True, upload_to=magi.utils.uploadTiny('cos/chibi'))),
+                ('costume', models.ForeignKey(related_name='owned_chibis', verbose_name='Costume', to='bang.Costume', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='costume',
             name='model_pkg',
-            field=models.FileField(upload_to=magi.utils.uploadItem(b'cos/z'), null=True, verbose_name='Model'),
+            field=models.FileField(upload_to=magi.utils.uploadItem('cos/z'), null=True, verbose_name='Model'),
             preserve_default=True,
         ),
         migrations.RunPython(move_card_chibis),
@@ -84,7 +84,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='asset',
             name='i_band',
-            field=models.PositiveIntegerField(help_text=b"Tagging a band is a shortcut to tagging all the members, so you don't need to tag the members when you tag a band.", null=True, verbose_name='Band', choices=[(0, b"Poppin'Party"), (1, b'Afterglow'), (2, b'Pastel*Palettes'), (3, b'Roselia'), (4, b'Hello, Happy World!')]),
+            field=models.PositiveIntegerField(help_text="Tagging a band is a shortcut to tagging all the members, so you don't need to tag the members when you tag a band.", null=True, verbose_name='Band', choices=[(0, "Poppin'Party"), (1, 'Afterglow'), (2, 'Pastel*Palettes'), (3, 'Roselia'), (4, 'Hello, Happy World!')]),
             preserve_default=True,
         ),
     ]

@@ -32,13 +32,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='card',
             name='i_side_skill_type',
-            field=models.PositiveIntegerField(db_index=True, null=True, verbose_name=b'Side skill', choices=[(1, 'Score up'), (2, 'Life recovery'), (3, 'Perfect lock'), (4, 'Life guard')]),
+            field=models.PositiveIntegerField(db_index=True, null=True, verbose_name='Side skill', choices=[(1, 'Score up'), (2, 'Life recovery'), (3, 'Perfect lock'), (4, 'Life guard')]),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='card',
             name='i_skill_special',
-            field=models.PositiveIntegerField(null=True, verbose_name=b'Skill details - Special case', choices=[(0, b'Based off PERFECT notes'), (1, b'Scoreup based on stamina'), (2, b'Better scoreup if you can hit perfects')]),
+            field=models.PositiveIntegerField(null=True, verbose_name='Skill details - Special case', choices=[(0, 'Based off PERFECT notes'), (1, 'Scoreup based on stamina'), (2, 'Better scoreup if you can hit perfects')]),
             preserve_default=True,
         ),
         migrations.AlterField(

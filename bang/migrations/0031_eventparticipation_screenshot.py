@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='eventparticipation',
             name='screenshot',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'event_screenshot'), null=True, verbose_name='Screenshot'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('event_screenshot'), null=True, verbose_name='Screenshot'),
             preserve_default=True,
         ),
     ]

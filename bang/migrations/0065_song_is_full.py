@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='song',
             name='is_full',
-            field=models.BooleanField(default=False, verbose_name=b'FULL'),
+            field=models.BooleanField(default=False, verbose_name='FULL'),
             preserve_default=True,
         ),
     ]

@@ -3,7 +3,8 @@ from __future__ import division
 import datetime, os
 from collections import OrderedDict
 from django.conf import settings as django_settings
-from django.utils.translation import ugettext_lazy as _, string_concat, get_language
+from django.utils.translation import gettext_lazy as _, get_language
+from django.utils.text import format_lazy
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.safestring import mark_safe
 from django.db.models import Q
@@ -53,7 +54,7 @@ MEMBER_BAND_CHOICE_FIELD = forms.ChoiceField(
         (u'band-{}'.format(i), band)
         for i, band in i_choices(models.Member.BAND_CHOICES)
     ],
-    label=string_concat(_('Member'), ' / ', _('Band')),
+    label=format_lazy('{}{}{}', _('Member'), ' / ', _('Band')),
     initial=None,
 )
 
@@ -195,7 +196,7 @@ class MemberFilterForm(MagiFiltersForm):
         ('id', _('Band')),
         ('_cache_total_fans', _('Most popular')),
         ('name', _('Name')),
-        ('japanese_name', string_concat(_('Name'), ' (', t['Japanese'], ')')),
+        ('japanese_name', format_lazy('{}{}{}{}', _('Name'), ' (', t['Japanese'], ')')),
         ('birthday', _('Birthday')),
         ('height', _('Height')),
         ('color', _('Color')),
@@ -233,7 +234,7 @@ class CardForm(AutoForm):
         instance.save()
 
         # members can't cameo in their own cards
-        instance.cameo_members = filter(lambda x: x.id != instance.member_id, self.cleaned_data['cameo_members'])
+        instance.cameo_members.set([x for x in self.cleaned_data['cameo_members'] if x.id != instance.member_id])
         instance.update_cache('cameos')
         return instance
 
@@ -250,20 +251,20 @@ class CardFilterForm(MagiFiltersForm):
     ordering_fields = [
         ('release_date,id', _('Release date')),
         ('id', _('ID')),
-        ('_cache_total_collectedcards', lambda: string_concat(_('Most popular'), ' (', _('Collected {things}').format(things=_('Cards').lower()), ')')),
-        ('_cache_total_favorited', lambda: string_concat(_('Most popular'), ' (', _('Favorite {things}').format(things=_('Cards').lower()), ')')),
-        ('member__name', string_concat(_('Member'), ' - ', _('Name'))),
-        ('member__japanese_name', string_concat(_('Member'), ' - ', _('Name'), ' (', t['Japanese'], ')')),
+        ('_cache_total_collectedcards', lambda: format_lazy('{}{}{}{}', _('Most popular'), ' (', _('Collected {things}').format(things=_('Cards').lower()), ')')),
+        ('_cache_total_favorited', lambda: format_lazy('{}{}{}{}', _('Most popular'), ' (', _('Favorite {things}').format(things=_('Cards').lower()), ')')),
+        ('member__name', format_lazy('{}{}{}', _('Member'), ' - ', _('Name'))),
+        ('member__japanese_name', format_lazy('{}{}{}{}{}{}', _('Member'), ' - ', _('Name'), ' (', t['Japanese'], ')')),
         ('i_rarity', _('Rarity')),
         ('i_attribute', _('Attribute')),
         ('performance_max', _('Performance')),
-        ('performance_trained_max', string_concat(_('Performance'), ' (', _('Trained'), ')')),
+        ('performance_trained_max', format_lazy('{}{}{}{}', _('Performance'), ' (', _('Trained'), ')')),
         ('technique_max', _('Technique')),
-        ('technique_trained_max', string_concat(_('Technique'), ' (', _('Trained'), ')')),
+        ('technique_trained_max', format_lazy('{}{}{}{}', _('Technique'), ' (', _('Trained'), ')')),
         ('visual_max', _('Visual')),
-        ('visual_trained_max', string_concat(_('Visual'), ' (', _('Trained'), ')')),
+        ('visual_trained_max', format_lazy('{}{}{}{}', _('Visual'), ' (', _('Trained'), ')')),
         ('_overall_max', _('Overall')),
-        ('_overall_trained_max', string_concat(_('Overall'), ' (', _('Trained'), ')')),
+        ('_overall_trained_max', format_lazy('{}{}{}{}', _('Overall'), ' (', _('Trained'), ')')),
     ]
 
     presets = OrderedDict([
@@ -441,14 +442,14 @@ class EventForm(AutoForm):
     start_date = forms.DateField(label=_('Beginning'))
     end_date = forms.DateField(label=_('End'))
 
-    english_start_date = forms.DateField(label=string_concat(_('English version'), ' - ', _('Beginning')), required=False)
-    english_end_date = forms.DateField(label=string_concat(_('English version'), ' - ', _('End')), required=False)
+    english_start_date = forms.DateField(label=format_lazy('{}{}{}', _('English version'), ' - ', _('Beginning')), required=False)
+    english_end_date = forms.DateField(label=format_lazy('{}{}{}', _('English version'), ' - ', _('End')), required=False)
 
-    taiwanese_start_date = forms.DateField(label=string_concat(_('Taiwanese version'), ' - ', _('Beginning')), required=False)
-    taiwanese_end_date = forms.DateField(label=string_concat(_('Taiwanese version'), ' - ', _('End')), required=False)
+    taiwanese_start_date = forms.DateField(label=format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Beginning')), required=False)
+    taiwanese_end_date = forms.DateField(label=format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('End')), required=False)
 
-    korean_start_date = forms.DateField(label=string_concat(_('Korean version'), ' - ', _('Beginning')), required=False)
-    korean_end_date = forms.DateField(label=string_concat(_('Korean version'), ' - ', _('End')), required=False)
+    korean_start_date = forms.DateField(label=format_lazy('{}{}{}', _('Korean version'), ' - ', _('Beginning')), required=False)
+    korean_end_date = forms.DateField(label=format_lazy('{}{}{}', _('Korean version'), ' - ', _('End')), required=False)
 
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
@@ -527,13 +528,13 @@ class EventForm(AutoForm):
 class EventFilterForm(MagiFiltersForm):
     search_fields = ['name', 'japanese_name']
     ordering_fields = [
-        ('start_date', string_concat(_('Date'), ' (', _('Japanese version'), ')')),
-        ('english_start_date', string_concat(_('Date'), ' (', _('English version'), ')')),
-        ('taiwanese_start_date', string_concat(_('Date'), ' (', _('Taiwanese version'), ')')),
-        ('korean_start_date', string_concat(_('Date'), ' (', _('Korean version'), ')')),
-        ('_cache_total_participations', string_concat(_('Most popular'), ' (', _('Participated events'), ')')),
+        ('start_date', format_lazy('{}{}{}{}', _('Date'), ' (', _('Japanese version'), ')')),
+        ('english_start_date', format_lazy('{}{}{}{}', _('Date'), ' (', _('English version'), ')')),
+        ('taiwanese_start_date', format_lazy('{}{}{}{}', _('Date'), ' (', _('Taiwanese version'), ')')),
+        ('korean_start_date', format_lazy('{}{}{}{}', _('Date'), ' (', _('Korean version'), ')')),
+        ('_cache_total_participations', format_lazy('{}{}{}{}', _('Most popular'), ' (', _('Participated events'), ')')),
         ('name', _('Title')),
-        ('japanese_name', string_concat(_('Title'), ' (', t['Japanese'], ')')),
+        ('japanese_name', format_lazy('{}{}{}{}', _('Title'), ' (', t['Japanese'], ')')),
     ]
 
     boost_members = forms.ChoiceField(choices=BLANK_CHOICE_DASH + [(id, full_name) for (id, full_name, image) in getattr(django_settings, 'FAVORITE_CHARACTERS', [])], initial=None, label=_('Boost members'))
@@ -633,14 +634,14 @@ class GachaForm(AutoForm):
     start_date = forms.DateField(label=_('Beginning'))
     end_date = forms.DateField(label=_('End'))
 
-    english_start_date = forms.DateField(label=string_concat(_('English version'), ' - ', _('Beginning')), required=False)
-    english_end_date = forms.DateField(label=string_concat(_('English version'), ' - ', _('End')), required=False)
+    english_start_date = forms.DateField(label=format_lazy('{}{}{}', _('English version'), ' - ', _('Beginning')), required=False)
+    english_end_date = forms.DateField(label=format_lazy('{}{}{}', _('English version'), ' - ', _('End')), required=False)
 
-    taiwanese_start_date = forms.DateField(label=string_concat(_('Taiwanese version'), ' - ', _('Beginning')), required=False)
-    taiwanese_end_date = forms.DateField(label=string_concat(_('Taiwanese version'), ' - ', _('End')), required=False)
+    taiwanese_start_date = forms.DateField(label=format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Beginning')), required=False)
+    taiwanese_end_date = forms.DateField(label=format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('End')), required=False)
 
-    korean_start_date = forms.DateField(label=string_concat(_('Korean version'), ' - ', _('Beginning')), required=False)
-    korean_end_date = forms.DateField(label=string_concat(_('Korean version'), ' - ', _('End')), required=False)
+    korean_start_date = forms.DateField(label=format_lazy('{}{}{}', _('Korean version'), ' - ', _('Beginning')), required=False)
+    korean_end_date = forms.DateField(label=format_lazy('{}{}{}', _('Korean version'), ' - ', _('End')), required=False)
 
     def __init__(self, *args, **kwargs):
         super(GachaForm, self).__init__(*args, **kwargs)
@@ -699,12 +700,12 @@ class GachaForm(AutoForm):
 class GachaFilterForm(MagiFiltersForm):
     search_fields = ['name', 'japanese_name']
     ordering_fields = [
-        ('start_date', string_concat(_('Date'), ' (', _('Japanese version'), ')')),
-        ('english_start_date', string_concat(_('Date'), ' (', _('English version'), ')')),
-        ('taiwanese_start_date', string_concat(_('Date'), ' (', _('Taiwanese version'), ')')),
-        ('korean_start_date', string_concat(_('Date'), ' (', _('Korean version'), ')')),
+        ('start_date', format_lazy('{}{}{}{}', _('Date'), ' (', _('Japanese version'), ')')),
+        ('english_start_date', format_lazy('{}{}{}{}', _('Date'), ' (', _('English version'), ')')),
+        ('taiwanese_start_date', format_lazy('{}{}{}{}', _('Date'), ' (', _('Taiwanese version'), ')')),
+        ('korean_start_date', format_lazy('{}{}{}{}', _('Date'), ' (', _('Korean version'), ')')),
         ('name', _('Title')),
-        ('japanese_name', string_concat(_('Title'), ' (', t['Japanese'], ')')),
+        ('japanese_name', format_lazy('{}{}{}{}', _('Title'), ' (', t['Japanese'], ')')),
     ]
 
     def _gacha_type_to_queryset(self, queryset, request, value):
@@ -828,7 +829,7 @@ class RerunForm(AutoForm):
             if i_version is not None:
                 if models.Rerun.get_reverse_i('version', i_version) not in selected_item.versions:
                     raise forms.ValidationError(u'The {item} "{item_name}" is not available in {version}'.format(
-                        item=item, item_name=unicode(selected_item), version=models.Rerun.get_verbose_i('version', i_version),
+                        item=item, item_name=str(selected_item), version=models.Rerun.get_verbose_i('version', i_version),
                     ))
             return cleaned_data
 
@@ -905,7 +906,7 @@ def unlock_to_form(unlock):
         def __init__(self, *args, **kwargs):
             super(_UnlockSongForm, self).__init__(*args, **kwargs)
             help_text = mark_safe(u'Will be displayed as <code>{}</code>'.format(
-                unicode(models.Song.UNLOCK[unlock]['template']).format(**{
+                str(models.Song.UNLOCK[unlock]['template']).format(**{
                     variable: 'xxx'
                     for variable in models.Song.UNLOCK[unlock]['variables']
                 }),
@@ -952,16 +953,16 @@ class SongFilterForm(MagiFiltersForm):
     ordering_fields = [
         ('release_date', _('Release date')),
         ('japanese_name', _('Title')),
-        ('_cache_total_played', string_concat(_('Most popular'), ' (', _('Played songs'), ')')),
-        ('romaji_name', string_concat(_('Title'), ' (', _('Romaji'), ')')),
+        ('_cache_total_played', format_lazy('{}{}{}{}', _('Most popular'), ' (', _('Played songs'), ')')),
+        ('romaji_name', format_lazy('{}{}{}{}', _('Title'), ' (', _('Romaji'), ')')),
         ('length', _('Length')),
         ('bpm', _('BPM')),
-        ('hard_notes', string_concat(_('Hard'), ' - ', _('Notes'))),
-        ('hard_difficulty', string_concat(_('Hard'), ' - ', _('Difficulty'))),
-        ('expert_notes', string_concat(_('Expert'), ' - ', _('Notes'))),
-        ('expert_difficulty', string_concat(_('Expert'), ' - ', _('Difficulty'))),
-        ('special_notes', string_concat(_('Special'), ' - ', _('Notes'))),
-        ('special_difficulty', string_concat(_('Special'), ' - ', _('Difficulty'))),
+        ('hard_notes', format_lazy('{}{}{}', _('Hard'), ' - ', _('Notes'))),
+        ('hard_difficulty', format_lazy('{}{}{}', _('Hard'), ' - ', _('Difficulty'))),
+        ('expert_notes', format_lazy('{}{}{}', _('Expert'), ' - ', _('Notes'))),
+        ('expert_difficulty', format_lazy('{}{}{}', _('Expert'), ' - ', _('Difficulty'))),
+        ('special_notes', format_lazy('{}{}{}', _('Special'), ' - ', _('Notes'))),
+        ('special_difficulty', format_lazy('{}{}{}', _('Special'), ' - ', _('Difficulty'))),
     ]
 
     presets = OrderedDict([

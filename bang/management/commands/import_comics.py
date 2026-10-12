@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
-import requests, json, sys, os, cStringIO, io
+import requests, json, sys, os, io
 from PIL import Image
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files.images import ImageFile
-from django.utils.six.moves import input
 from magi import urls # Unused, fills up RAW_CONTEXT for file uploading
 from magi.utils import dataToImageFile
 from magi import models as magi_models
@@ -104,7 +103,7 @@ def _parse_comic_title_parts(comic_title, version):
         parts = comic_title.split(separator)
         if len(parts) > 1:
             return parts[0].strip(), parts[1].strip()
-    print '  ! Warning: Couldn\'t parse data from title. Using full title as name with no data.'
+    print('  ! Warning: Couldn\'t parse data from title. Using full title as name with no data.')
     return '', comic_title
 
 def parse_comic_title(all_members, comic_title, version):
@@ -137,7 +136,7 @@ def parse_comic_title(all_members, comic_title, version):
                 data['members'] = []
             data['members'].append(member)
             continue
-        print '  ! Warning: Couldn\'t parse any data for prefix part', band_or_member
+        print('  ! Warning: Couldn\'t parse any data for prefix part', band_or_member)
     return data, comic_name.replace(u'「', '').replace(u'」', '')
 
 def find_possible_matching_comics_from_data(data, comics_bundles, version):
@@ -172,7 +171,7 @@ def download_image_file(url):
 def resize_image_from_data(data, filename, width=200, height=200):
     _, extension = os.path.splitext(filename)
     extension = extension.lower()
-    image = Image.open(cStringIO.StringIO(data))
+    image = Image.open(io.BytesIO(data))
     image = image.resize((int(width), int(height)))
     output = io.BytesIO()
     image.save(output, format={
@@ -194,7 +193,7 @@ def import_comics(args):
     for version, version_details in [(v, vv) for v, vv in models.Account.VERSIONS.items() if v == 'KR'] + [(v, vv) for v, vv in models.Account.VERSIONS.items() if v != 'KR']:
         language = models.VERSIONS_TO_LANGUAGES[version]
 
-        print 'Downloading list of comics for', unicode(version_details['translation']), '...'
+        print('Downloading list of comics for', str(version_details['translation']), '...')
         filename = u'comics_{}.json'.format(version.lower())
         if 'local' in args:
             f = open(filename, 'r')
@@ -206,12 +205,12 @@ def import_comics(args):
             json.dump(result, filed)
             filed.close()
 
-        print '  Found', result['totalCount'], 'comics for', unicode(version_details['translation']), '.'
+        print('  Found', result['totalCount'], 'comics for', str(version_details['translation']), '.')
 
         for comic in result['data']:
-            print '    Adding', comic['title']
+            print('    Adding', comic['title'])
             data, comic_name = parse_comic_title(all_members, comic['title'], version)
-            print '     ', comic_name, data
+            print('     ', comic_name, data)
             comic_bundle = comic['assetBundleName']
             image_url = u'https://bangdream.ga{}'.format(comic['assetAddress'])
             image_field_name = u'{prefix}image'.format(prefix=version_details['prefix'])
@@ -225,14 +224,14 @@ def import_comics(args):
                 if existing_comic.parsed_data != data:
                     existing_comic = None
                     comic_bundle += '-special'
-                    print '      !! Warning: Different data found from previously added with same bundle'
-                    print '      Image URL:', image_url
+                    print('      !! Warning: Different data found from previously added with same bundle')
+                    print('      Image URL:', image_url)
                     accepted_match = False
                     possible_matches = find_possible_matching_comics_from_data(data, comics_bundles, version)
                     if possible_matches:
-                        print 'Possible matches:'
+                        print('Possible matches:')
                         for matching_bundle, matching_comic in possible_matches:
-                            print '        ', matching_comic.id, matching_comic.original_urls
+                            print('        ', matching_comic.id, matching_comic.original_urls)
                             # Prompt to check and accept match
                             answer = None
                             try:
@@ -243,13 +242,13 @@ def import_comics(args):
                                         comic_bundle = matching_bundle
                                         accepted_match = True
                             except KeyboardInterrupt:
-                                print ''
-                                print 'Operation cancelled.'
+                                print('')
+                                print('Operation cancelled.')
                                 sys.exit(1)
                             if accepted_match:
                                 break
                     else:
-                        print '      No match found, adding by itself.'
+                        print('      No match found, adding by itself.')
                     if not accepted_match:
                         try:
                             answer = None
@@ -258,15 +257,15 @@ def import_comics(args):
                                 if answer and answer != 'no':
                                     found_bundle, found_comic = find_existing_comic_by_id(comics_bundles, int(answer))
                                     if not found_comic:
-                                        print '        Not found.'
+                                        print('        Not found.')
                                         answer = None
                                     else:
                                         existing_comic = found_comic
                                         comic_bundle = found_bundle
                                         accepted_match = True
                         except KeyboardInterrupt:
-                            print ''
-                            print 'Operation cancelled.'
+                            print('')
+                            print('Operation cancelled.')
                             sys.exit(1)
 
             should_download_image = True
@@ -282,7 +281,7 @@ def import_comics(args):
                     else:
                         setattr(comic, k, v)
                 should_download_image = False
-                print '     ', comic_name, 'already exists and has image in this version.'
+                print('     ', comic_name, 'already exists and has image in this version.')
             else:
                 if existing_comic:
                     comic = existing_comic
@@ -298,13 +297,13 @@ def import_comics(args):
                     else:
                         comic.add_d('names', language, comic_name)
                     if had_already:
-                        print '      Update image...'
+                        print('      Update image...')
                         updated_comics += 1
                     else:
-                        print '      Add image...'
+                        print('      Add image...')
                         added_comics += 1
                 else:
-                    print '      Create asset...'
+                    print('      Create asset...')
                     data = {
                         'owner': owner,
                         'i_type': models.Asset.get_i('type', 'comic'),
@@ -312,10 +311,10 @@ def import_comics(args):
                         'value': 1,
                     }
                     comic = models.Asset.objects.create(**data)
-                    print '      Done.'
+                    print('      Done.')
                     if language != 'en':
                         comic.add_d('names', language, comic_name)
-                    print '      Add image...'
+                    print('      Add image...')
                     added_comics += 1
 
             comic.parsed_data = data
@@ -329,31 +328,31 @@ def import_comics(args):
                     image = download_image_file(image_url)
                     filename = image.name
                     if not image:
-                        print '!! Error while downloading image for comic', comic_name
+                        print('!! Error while downloading image for comic', comic_name)
                         continue
                     if version in VERSIONS_NEED_RESIZE:
                         adjusted_width = image.height * 600 / 436
-                        print u'        Resize image from {}x{} to {}x{}...'.format(
+                        print(u'        Resize image from {}x{} to {}x{}...'.format(
                             image.width, image.height,
                             adjusted_width, image.height,
-                        )
+                        ))
                         image = resize_image_from_data(image.read(), filename, width=adjusted_width, height=image.height)
                     image.name = models.Asset._meta.get_field('image').upload_to(comic, filename)
                     setattr(comic, image_field_name, image)
-                    print '        Done.'
+                    print('        Done.')
 
-                print '      Comic:', comic.http_item_url
-                print '      Done.'
+                print('      Comic:', comic.http_item_url)
+                print('      Done.')
 
             comic.save()
             # -- End of for per comic
         # -- End of for per version
 
-        print 'End of', unicode(version_details['translation']), '.'
+        print('End of', str(version_details['translation']), '.')
 
-    print added_comics, 'comics have been added.'
+    print(added_comics, 'comics have been added.')
     if 'redownload' in args or updated_comics:
-        print updated_comics, 'comics have been updated.'
+        print(updated_comics, 'comics have been updated.')
 
 class Command(BaseCommand):
     can_import_settings = True
