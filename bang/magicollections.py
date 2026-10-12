@@ -2535,7 +2535,7 @@ class AssetCollection(MainItemCollection):
             if field in fields:
                  fields[field] = subtitledImageLink(getattr(item, field), verbose_name, field)
 
-        if item.type is 'title' and item.value:
+        if item.type == 'title' and item.value:
             setSubField(fields, 'name', key='value', value=format_lazy('{}{}{}', item.t_name, ' ', item.value))
 
         if item.source and item.source_link:
