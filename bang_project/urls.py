@@ -1,8 +1,7 @@
-from django.conf.urls import patterns, include, url
+from django.urls import include, re_path
 from django.contrib import admin
 from rest_framework import routers
 import api.views as api_views
-from django.conf.urls import handler500, handler403
 
 handler500 = 'magi.views.handler500'
 handler403 = 'magi.views.handler403'
@@ -19,10 +18,10 @@ router.register(r'areaitems', api_views.AreaItemViewSet)
 router.register(r'assets', api_views.AssetViewSet)
 router.register(r'items', api_views.ItemViewSet)
 
-urlpatterns = patterns('',
-    url(r'^', include('magi.urls')),
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/', include(router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-)
+urlpatterns = [
+    re_path(r'^', include('magi.urls')),
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^api/', include(router.urls)),
+    re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    re_path(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+]

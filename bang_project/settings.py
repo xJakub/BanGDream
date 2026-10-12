@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+# Import magi early (before INSTALLED_APPS is processed) so its compat
+# shims for abandoned dependencies (magi/__init__.py) are in place before
+# Django imports 'bootstrapform', which comes earlier in INSTALLED_APPS.
+import magi  # noqa: F401
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -23,7 +28,27 @@ SECRET_KEY = '#yt2*mvya*ulaxd+6jtr#%ouyco*2%3ngb=u-_$44j^86g0$$3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'debug': DEBUG,
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+            ],
+        },
+    },
+]
 
 ALLOWED_HOSTS = []
 
@@ -47,12 +72,11 @@ INSTALLED_APPS = (
     'django.contrib.auth',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -74,7 +98,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'magi.api_renderers.JSONRenderer',
     ),
-    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'PAGINATE_BY': 10,
     'MAX_PAGINATE_BY': 100,
     'PAGINATE_BY_PARAM': 'page_size',
@@ -213,12 +237,12 @@ PRICE_PER_STARGEM = 1.33333
 YEN_TO_USD = 0.0091
 
 try:
-    from generated_settings import *
-except ImportError, e:
+    from .generated_settings import *
+except ImportError as e:
     pass
 try:
-    from local_settings import *
-except ImportError, e:
+    from .local_settings import *
+except ImportError as e:
     pass
 
 INSTALLED_APPS = list(INSTALLED_APPS)
