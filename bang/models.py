@@ -83,7 +83,7 @@ def displayNames(item, field_name='name'):
     t_name = getattr(item, u't_{}'.format(field_name))
     return listUnique([
         name for name in [
-            unicode(t_name) if t_name else None,
+            str(t_name) if t_name else None,
             getattr(item, field_name),
             getattr(item, u'japanese_{}'.format(field_name)),
         ] if name
@@ -421,8 +421,8 @@ class Member(MagiModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
-        return unicode(self.t_name)
+    def __str__(self):
+        return str(self.t_name)
 
     ############################################################
     # Meta
@@ -615,14 +615,14 @@ class Card(MagiModel):
     SPECIAL_CASES_VARIABLES = make_SPECIAL_CASES_VARIABLES(SKILL_TYPES, SKILL_SPECIAL_CHOICES)
 
     TEMPLATE_PER_SKILL_TYPES = {
-        'skill': { _skill_type: unicode(_info['template']) for _skill_type, _info in SKILL_TYPES.items() },
-        'side_skill': { _skill_type: unicode(_info['side_template']) for _skill_type, _info in SKILL_TYPES.items() },
+        'skill': { _skill_type: str(_info['template']) for _skill_type, _info in SKILL_TYPES.items() },
+        'side_skill': { _skill_type: str(_info['side_template']) for _skill_type, _info in SKILL_TYPES.items() },
     }
 
     def make_SPECIAL_CASES_TEMPLATE(SKILL_TYPES, SKILL_SPECIAL_CHOICES):
         return {
             _skill_type: {
-                _i: unicode(_info['special_templates'][_k]) for _i, _k in enumerate([_c[0] for _c in SKILL_SPECIAL_CHOICES]) if _k in _info['special_templates']
+                _i: str(_info['special_templates'][_k]) for _i, _k in enumerate([_c[0] for _c in SKILL_SPECIAL_CHOICES]) if _k in _info['special_templates']
             } for _skill_type, _info in SKILL_TYPES.items() if 'special_templates' in _info
         }
     SPECIAL_CASES_TEMPLATE = make_SPECIAL_CASES_TEMPLATE(SKILL_TYPES, SKILL_SPECIAL_CHOICES)
@@ -895,7 +895,7 @@ class Card(MagiModel):
         return {
             'id': self.member_id,
             'names': names,
-            'image': unicode(self.member.square_image),
+            'image': str(self.member.square_image),
         }
 
     # Cache events
@@ -920,7 +920,7 @@ class Card(MagiModel):
             events.append({
                 'id': event.id,
                 'names': names,
-                'image': unicode(event.image),
+                'image': str(event.image),
             })
         return events if events else None
 
@@ -946,7 +946,7 @@ class Card(MagiModel):
             gachas.append({
                 'id': gacha.id,
                 'names': names,
-                'image': unicode(gacha.image),
+                'image': str(gacha.image),
             })
         return gachas if gachas else None
 
@@ -960,9 +960,9 @@ class Card(MagiModel):
     def to_cache_cameos(self):
         return [{
             'id': cameo.id,
-            'name': unicode(cameo.name),
-            'japanese_name': unicode(cameo.japanese_name),
-            'image': unicode(cameo.square_image),
+            'name': str(cameo.name),
+            'japanese_name': str(cameo.japanese_name),
+            'image': str(cameo.square_image),
         } for cameo in self.cameo_members.all()]
 
     @classmethod
@@ -1005,7 +1005,7 @@ class Card(MagiModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
+    def __str__(self):
         if self.id:
             return u'{rarity} {member_name} - {attribute}{name}'.format(
                 rarity=self.t_rarity,
@@ -1076,15 +1076,15 @@ class CollectibleCard(AccountAsOwnerModel):
         if self.card.skill_duration:
             self.previous_duration = self.card.skill_duration
             self.card.skill_duration = self.card.skill_duration + (((self.skill_level or 1) - 1) * 0.5)
-        full_skill = unicode(self.card.full_skill)
+        full_skill = str(self.card.full_skill)
         if self.card.skill_duration:
             self.card.skill_duration = self.previous_duration
         return full_skill
 
-    def __unicode__(self):
+    def __str__(self):
         if self.id:
-            return unicode(self.card)
-        return super(CollectibleCard, self).__unicode__()
+            return str(self.card)
+        return super(CollectibleCard, self).__str__()
 
     class Meta:
         ordering = ['-card__i_rarity', '-trained', '-card__release_date']
@@ -1221,7 +1221,7 @@ class Event(MagiModel):
     @property
     def cached_gacha(self):
         # No need for a cache because the gacha is select_related in item view
-        self.gacha.unicode = unicode(self.gacha)
+        self.gacha.unicode = str(self.gacha)
         return self.gacha
 
     def get_status(self, version='JP'):
@@ -1250,7 +1250,7 @@ class Event(MagiModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
+    def __str__(self):
         return self.t_name
 
     ############################################################
@@ -1338,10 +1338,10 @@ class EventParticipation(AccountAsOwnerModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
+    def __str__(self):
         if self.id:
-            return unicode(self.event)
-        return super(EventParticipation, self).__unicode__()
+            return str(self.event)
+        return super(EventParticipation, self).__str__()
 
     ############################################################
     # Meta
@@ -1483,7 +1483,7 @@ class Song(MagiModel):
     unlock_template = property(getInfoFromChoices('unlock', UNLOCK, 'template'))
     @property
     def unlock_sentence(self):
-        return unicode(self.unlock_template).format(**{
+        return str(self.unlock_template).format(**{
             k: (self.unlock_variables_transform or {}).get(k, lambda s, v: v)(self, v)
             for k, v in zip(self.unlock_variables_keys, self.unlock_variables)
         })
@@ -1493,7 +1493,7 @@ class Song(MagiModel):
     @property
     def cached_event(self):
         # No need for a cache because the event is select_related in item view
-        self.event.unicode = unicode(self.event)
+        self.event.unicode = str(self.event)
         return self.event
 
     @property # Needed to use with types in magicollections
@@ -1516,7 +1516,7 @@ class Song(MagiModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
+    def __str__(self):
         if get_language() == 'ja':
             return self.japanese_name
         if not self.romaji_name:
@@ -1603,10 +1603,10 @@ class PlayedSong(AccountAsOwnerModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
+    def __str__(self):
         if self.id:
-            return unicode(self.song)
-        return super(PlayedSong, self).__unicode__()
+            return str(self.song)
+        return super(PlayedSong, self).__str__()
 
     ############################################################
     # Meta
@@ -1682,7 +1682,7 @@ class Gacha(MagiModel):
     @property
     def cached_event(self):
         # No need for a cache because the event is select_related in item view
-        self.event.unicode = unicode(self.event)
+        self.event.unicode = str(self.event)
         return self.event
 
     def get_status(self, version='JP'):
@@ -1698,7 +1698,7 @@ class Gacha(MagiModel):
     ############################################################
     # Unicode
 
-    def __unicode__(self):
+    def __str__(self):
         return _('{} Gacha').format(self.t_name)
 
     ############################################################
@@ -1743,7 +1743,7 @@ class Rerun(MagiModel):
     def status(self):
         return getEventStatus(self.start_date, self.end_date)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'Rerun {} "{}" ({}): {} - {}'.format(
             'Gacha' if self.gacha_id else 'Event',
             self.gacha or self.event,
@@ -1778,7 +1778,7 @@ class Item(MagiModel):
     M_DESCRIPTIONS_CHOICES = ALL_ALT_LANGUAGES
     d_m_descriptions = models.TextField(_('Description'), null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.t_name
 
     class Meta:
@@ -1802,10 +1802,10 @@ class CollectibleItem(AccountAsOwnerModel):
     def subtitle(self):
         return u'x{}'.format(self.quantity)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.id:
-            return unicode(self.item)
-        return super(CollectibleItem, self).__unicode__()
+            return str(self.item)
+        return super(CollectibleItem, self).__str__()
 
 ############################################################
 # Area item
@@ -1822,7 +1822,7 @@ class Area(MagiModel):
     NAMES_CHOICES = ALL_ALT_LANGUAGES
     d_names = models.TextField(_('Title'), null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.t_name
 
 class AreaItem(MagiModel):
@@ -1929,8 +1929,8 @@ class AreaItem(MagiModel):
     @property
     def stat(self):
         if self.i_boost_stat is not None:
-            return unicode(self.t_boost_stat)
-        return unicode(_('All'))
+            return str(self.t_boost_stat)
+        return str(_('All'))
 
     def formatted_description(self, level=1):
         if level > len(self.value_list or ''):
@@ -1949,7 +1949,7 @@ class AreaItem(MagiModel):
         return _('{affected} members get a {value} boost on {stat} statistics').format(
             affected=self.affected, value=value, stat=self.stat)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.formatted_name
 
 ############################################################
@@ -1975,10 +1975,10 @@ class CollectibleAreaItem(AccountAsOwnerModel):
     def subtitle(self):
         return _('Level {level}').format(level=self.level)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.id:
-            return unicode(self.areaitem)
-        return super(CollectibleAreaItem, self).__unicode__()
+            return str(self.areaitem)
+        return super(CollectibleAreaItem, self).__str__()
 
 ############################################################
 # Assets
@@ -2095,8 +2095,8 @@ class Asset(MagiModel):
             'icon': 'pictures',
             'to_unicode': lambda _a: u' - '.join([_s for _s in [
                 _a.t_name,
-                unicode(_a.song) if _a.song else None,
-                unicode(_a.band) if _a.band else None,
+                str(_a.song) if _a.song else None,
+                str(_a.band) if _a.band else None,
                 u', '.join([member.first_name for member in getattr(_a, 'all_members', [])]) if not _a.band else '',
             ] if _s] or [
             ]) or _('Official art'),
@@ -2208,8 +2208,8 @@ class Asset(MagiModel):
     def display_name_in_list(self):
         return mark_safe(u'<br>'.join([escape(name) for name in self.to_unicode(self).split(' - ')]))
 
-    def __unicode__(self):
-        return unicode(self.to_unicode(self))
+    def __str__(self):
+        return str(self.to_unicode(self))
 
 ############################################################
 # Costume
@@ -2226,8 +2226,8 @@ class Chibi(BaseMagiModel):
         },
     }
 
-    def __unicode__(self):
-        return unicode(self.image)
+    def __str__(self):
+        return str(self.image)
 
 class Costume(MagiModel):
     collection_name = 'costume'
@@ -2290,7 +2290,7 @@ class Costume(MagiModel):
     card = models.OneToOneField(Card, verbose_name=_('Card'), related_name='associated_costume', null=True, on_delete=models.SET_NULL)
     # owned_chibis
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{}{}'.format(
             u'{} - '.format(self.member.t_name) if self.member_id else '',
             self.t_name,
@@ -2311,7 +2311,7 @@ class Costume(MagiModel):
     #     if not chibis:
     #         chibis = Chibi.objects.filter(costume=self)
     #     self._cache_chibis_ids = join_data(*[ image.id for image in chibis ])
-    #     self._cache_chibis_paths = join_data(*[ unicode(image) for image in chibis ])
+    #     self._cache_chibis_paths = join_data(*[ str(image) for image in chibis ])
 
     # def force_cache_chibis(self):
     #     self.update_cache_chibis()

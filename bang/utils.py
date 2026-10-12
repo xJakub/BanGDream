@@ -58,14 +58,14 @@ def subtitledImageLink(item, verbose_name, icon=None, image=None, subtitle=None)
         'image': image,
         'icon': icon,
         'verbose_name': verbose_name,
-        'verbose_name_subtitle': subtitle or unicode(item),
+        'verbose_name_subtitle': subtitle or str(item),
         'value': (getattr(item, '{}image_url'.format(
             models.Account.VERSIONS[models.LANGUAGES_TO_VERSIONS.get(get_language(), 'EN')]['prefix'],
         ), None) or item.image_url),
         'type': 'image_link',
         'link': item.item_url,
         'ajax_link': item.ajax_item_url,
-        'link_text': subtitle or unicode(item),
+        'link_text': subtitle or str(item),
     }
 
 def add_rerun_buttons(view, buttons, request, item):
@@ -96,7 +96,7 @@ def add_rerun_fields(view, item, request):
                 'verbose_name': _('Rerun'),
                 'type': 'html',
                 'value': u'<p>{}</p>'.format(u'</p><p>'.join([
-                    unicode(x) for x in [
+                    str(x) for x in [
                         toCountDown(date=rerun.end_date if rerun.status == 'current' else rerun.start_date,
                             sentence=_('{time} left') if rerun.status == 'current' else _('Starts in {time}'),
                             classes=['fontx1-5']),

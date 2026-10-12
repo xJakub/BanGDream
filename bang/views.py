@@ -107,7 +107,7 @@ def teambuilder(request, context):
             for cc in queryset:
                 if request.user.is_staff:
                     cc.calculation_details = [
-                        unicode(cc.card),
+                        str(cc.card),
                         mark_safe(u'Ordering: <ol>{}</ol>'.format(''.join([
                             u'<li>{}</li>'.format(o.replace('-', '').replace('_', ' ').capitalize())
                             for o in order_by
@@ -115,7 +115,7 @@ def teambuilder(request, context):
                     ]
                     if form.cleaned_data['i_skill_type']:
                         cc.calculation_details += [
-                            u'Skill type: {}'.format(unicode(cc.card.t_skill_type)),
+                            u'Skill type: {}'.format(str(cc.card.t_skill_type)),
                             'Skill: {}'.format(cc.card.full_skill),
                             'Base skill duration: {}'.format(cc.card.skill_duration),
                             'Skill level: {}'.format(cc.skill_level or 1),

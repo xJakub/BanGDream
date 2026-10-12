@@ -40,7 +40,7 @@ GAME_URL = 'https://bang-dream.bushimo.jp/'
 COLOR = '#E40046'
 SECONDARY_COLOR = '#F2B141'
 
-LAUNCH_DATE = datetime.datetime(2017, 04, 9, 12, 0, 0, tzinfo=pytz.UTC)
+LAUNCH_DATE = datetime.datetime(2017, 4, 9, 12, 0, 0, tzinfo=pytz.UTC)
 
 ############################################################
 # Images
@@ -224,13 +224,13 @@ ACTIVITY_TAGS = [
     }),
     ('BBSChallenge', {
         'translation': 'BBSChallenge',
-        'start_date': datetime.datetime(2020, 03, 25, 10, 00, tzinfo=datetime.timezone.utc),
-        'end_date': datetime.datetime(2020, 04, 19, 10, 00, tzinfo=datetime.timezone.utc),
+        'start_date': datetime.datetime(2020, 3, 25, 10, 0, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2020, 4, 19, 10, 0, tzinfo=datetime.timezone.utc),
     }),
     ('FanLettersForMyValentine', {
         'translation': 'FanLettersForMyValentine',
-        'start_date': datetime.datetime(2020, 02, 10, 10, 00, tzinfo=datetime.timezone.utc),
-        'end_date': datetime.datetime(2020, 03, 01, 10, 00, tzinfo=datetime.timezone.utc),
+        'start_date': datetime.datetime(2020, 2, 10, 10, 0, tzinfo=datetime.timezone.utc),
+        'end_date': datetime.datetime(2020, 3, 1, 10, 0, tzinfo=datetime.timezone.utc),
     }),
     ('petiteidolstudiosummer', {
         'translation': 'PetiteIdolStudioSummer',
@@ -365,8 +365,8 @@ ENABLED_PAGES['gallery'] = {
     'icon': 'pictures',
     'navbar_link_list': 'girlsbandparty',
     'page_description': lambda: u'{} - {}'.format(_('Gallery of {license} images').format(
-        license=unicode(GAME_NAME)), u', '.join(
-            [unicode(_d['translation']) for _d in models.Asset.TYPES.values()])),
+        license=str(GAME_NAME)), u', '.join(
+            [str(_d['translation']) for _d in models.Asset.TYPES.values()])),
 }
 
 ENABLED_PAGES['officialart'] = {

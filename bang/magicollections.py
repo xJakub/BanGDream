@@ -821,7 +821,7 @@ class CardCollection(MainItemCollection):
                         'images': [{
                             'value': chibi.image_url,
                             'link': chibi.image_original_url,
-                            'link_text': u'{} - {}'.format(unicode(item), _('Chibi')),
+                            'link_text': u'{} - {}'.format(str(item), _('Chibi')),
                             'verbose_name': _('Chibi'),
                         } for chibi in item.associated_costume.chibis],
                     }))
@@ -829,7 +829,7 @@ class CardCollection(MainItemCollection):
                 to_cos_link = lambda text, classes=None: u'<a href="{url}" target="_blank" class="{classes}" data-ajax-url="{ajax_url}" data-ajax-title="{ajax_title}">{text}</a>'.format(
                     url=item.associated_costume.item_url,
                     ajax_url=item.associated_costume.ajax_item_url + "?from_card",
-                    ajax_title=format_lazy('{}{}{}', _("Costume"), " - ", unicode(item)),
+                    ajax_title=format_lazy('{}{}{}', _("Costume"), " - ", str(item)),
                     text=text,
                     classes=classes or '',
                 )
@@ -841,7 +841,7 @@ class CardCollection(MainItemCollection):
                         to_cos_link(_('View model'), classes='btn btn-lg btn-secondary'),
                         to_cos_link(u'<img src="{url}" alt="{item} preview">'.format(
                             url=item.associated_costume.image_thumbnail_url,
-                            item=unicode(item),
+                            item=str(item),
                         )) if item.associated_costume.image_url else '',
                     ))
                 }))
@@ -978,7 +978,7 @@ class CardCollection(MainItemCollection):
                     setSubField(fields, field_name, key='type', value='image_link')
                     setSubField(fields, field_name, key='link', value=item.item_url)
                     setSubField(fields, field_name, key='ajax_link', value=item.ajax_item_url)
-                    setSubField(fields, field_name, key='link_text', value=unicode(item))
+                    setSubField(fields, field_name, key='link_text', value=str(item))
             # Hide trained fields for cards that are not trainable
             if not item.trainable:
                 for field_name in ['image_trained', 'performance_trained_max', 'technique_trained_max', 'visual_trained_max', 'overall_trained_max']:
@@ -1152,7 +1152,7 @@ EVENT_CUTEFORM = {
      'i_boost_stat': {
         'type': CuteFormType.HTML,
         'to_cuteform': lambda k, v: format_html(
-            u'<span data-toggle="tooltip" title="{}">{}</div>', unicode(v), v[0]),
+            u'<span data-toggle="tooltip" title="{}">{}</div>', str(v), v[0]),
     },
     'version': {
         'to_cuteform': lambda k, v: CardCollection._version_images[k],
@@ -1220,7 +1220,7 @@ class EventCollection(MainItemCollection):
                 key='timezones', value=[version_details['timezone'], 'Local time'],
             )
 
-        if get_language() in models.ALT_LANGUAGES_EXCEPT_JP_KEYS and unicode(item.name) != unicode(item.t_name):
+        if get_language() in models.ALT_LANGUAGES_EXCEPT_JP_KEYS and str(item.name) != str(item.t_name):
             setSubField(fields, 'name', key='value', value=mark_safe(u'{}<br><span class="text-muted">{}</span>'.format(item.name, item.t_name)))
 
         return fields
@@ -1325,7 +1325,7 @@ class EventCollection(MainItemCollection):
                         'value': member.square_image_url,
                         'link': member.item_url,
                         'ajax_link': member.ajax_item_url,
-                        'link_text': unicode(member),
+                        'link_text': str(member),
                     } for member in item.all_members]
                 }))
             if item.main_card_id or item.secondary_card_id:
@@ -1337,7 +1337,7 @@ class EventCollection(MainItemCollection):
                         'value': card.image_url,
                         'link': card.item_url,
                         'ajax_link': card.ajax_item_url,
-                        'link_text': unicode(card),
+                        'link_text': str(card),
                     } for card in [item.main_card, item.secondary_card] if card is not None]
                 }))
             if len(item.all_gifted_songs):
@@ -1379,9 +1379,9 @@ class EventCollection(MainItemCollection):
                                         url=asset.song.item_url,
                                         ajax_url=asset.song.ajax_item_url,
                                         cls='a-nodifference',
-                                        title=unicode(asset.song),
+                                        title=str(asset.song),
                                     ))
-                                safe_verbose_name = unicode(asset.song)
+                                safe_verbose_name = str(asset.song)
                             extra_fields.append((
                                 version_field_name, {
                                     'type': 'image_link',
@@ -1416,7 +1416,7 @@ class EventCollection(MainItemCollection):
                         'link_text': _('Open {thing}').format(thing=_('Leaderboard').lower()),
                         'value': u'/eventparticipations/?event={}&view=leaderboard&ordering=ranking&i_version={}'.format(item.id, i_version),
                         'ajax_link': u'/ajax/eventparticipations/?event={}&view=leaderboard&ordering=ranking&i_version={}&ajax_modal_only'.format(item.id, i_version),
-                        'title': u'{} - {}'.format(unicode(item), _('Leaderboard')),
+                        'title': u'{} - {}'.format(str(item), _('Leaderboard')),
                     }))
 
             exclude_fields += ['c_versions', 'japanese_name']
@@ -1570,7 +1570,7 @@ class GachaCollection(MainItemCollection):
             'taiwanese_image': staticImageURL('language/zh-hant.png'),
             'korean_image': staticImageURL('language/kr.png'),
         }, exclude_fields=exclude_fields, **kwargs)
-        if get_language() == 'ja' or unicode(item.t_name) == unicode(item.japanese_name):
+        if get_language() == 'ja' or str(item.t_name) == str(item.japanese_name):
             setSubField(fields, 'name', key='value', value=_('{} Gacha').format(item.japanese_name))
         else:
             setSubField(fields, 'name', key='type', value='title_text')
@@ -1661,7 +1661,7 @@ class GachaCollection(MainItemCollection):
                         'value': card.image_url,
                         'link': card.item_url,
                         'ajax_link': card.ajax_item_url,
-                        'link_text': unicode(card),
+                        'link_text': str(card),
                     } for card in item.all_cards],
                 }))
             extra_fields += add_rerun_fields(self, item, request)
@@ -1759,7 +1759,7 @@ class RerunCollection(MainItemCollection):
 # Played songs Collection
 
 def to_PlayedSongCollection(cls):
-    _filter_cuteform = dict(_song_cuteform.items() + [
+    _filter_cuteform = dict(list(_song_cuteform.items()) + [
         ('full_combo', {
             'type': CuteFormType.YesNo,
         }),
@@ -1837,7 +1837,7 @@ def to_PlayedSongCollection(cls):
                 setSubField(fields, 'image', key='verbose_name', value=_('Song'))
                 setSubField(fields, 'image', key='type', value='image_link')
                 setSubField(fields, 'image', key='link', value=item.song.item_url)
-                setSubField(fields, 'image', key='link_text', value=unicode(item.song))
+                setSubField(fields, 'image', key='link_text', value=str(item.song))
                 setSubField(fields, 'image', key='ajax_link', value=item.song.ajax_item_url)
                 setSubField(fields, 'difficulty', key='type', value='image')
                 setSubField(fields, 'difficulty', key='value', value=lambda k: item.difficulty_image_url)
@@ -1974,7 +1974,7 @@ class SongCollection(MainItemCollection):
             'playedsong': False,
         }
 
-        filter_cuteform = dict(_song_cuteform.items() + [
+        filter_cuteform = dict(list(_song_cuteform.items()) + [
             ('is_cover', {
                 'type': CuteFormType.YesNo,
             }),
@@ -2016,7 +2016,7 @@ class SongCollection(MainItemCollection):
                 'verbose_name': _('Song'),
                 'verbose_name_subtitle': _('Cover song') if item.is_cover else _('Original song'),
                 'icon': 'id',
-                'type': 'title_text' if unicode(title) != unicode(value) else 'text',
+                'type': 'title_text' if str(title) != str(value) else 'text',
                 'title': title,
                 'value': value,
             }))
@@ -2067,7 +2067,7 @@ class SongCollection(MainItemCollection):
                             song_alt_covers += [{
                                 'value':  getattr(asset, '{}image_url'.format(info['prefix'])),
                                 'link':  getattr(asset, '{}image_url'.format(info['prefix'])),
-                                'link_text': unicode(asset),
+                                'link_text': str(asset),
                             }]
 
                 # Create field
@@ -2151,7 +2151,7 @@ class ItemCollection(MainItemCollection):
     def buttons_per_item(self, view, request, context, item):
         buttons = super(ItemCollection, self).buttons_per_item(view, request, context, item)
         if 'collectibleitem' in buttons:
-            buttons['collectibleitem']['title'] = _(u'Edit your {thing}').format(thing=unicode(item).lower())
+            buttons['collectibleitem']['title'] = _(u'Edit your {thing}').format(thing=str(item).lower())
         return buttons
 
     def get_title_prefixes(self, request, context):
@@ -2177,7 +2177,7 @@ class ItemCollection(MainItemCollection):
                 only_fields = ['i_type', 'm_description']
             fields = super(ItemCollection.ItemView, self).to_fields(item, *args,
                 only_fields=only_fields, icons={'type': 'category', 'description': 'present',}, **kwargs)
-            setSubField(fields, 'description', key='verbose_name', value=unicode(item))
+            setSubField(fields, 'description', key='verbose_name', value=str(item))
             return fields
 
 ############################################################
@@ -2238,7 +2238,7 @@ AREA_ITEM_CUTEFORM = {
     'i_boost_stat': {
         'type': CuteFormType.HTML,
         'to_cuteform': lambda k, v: format_html(
-            u'<span data-toggle="tooltip" title="{}">{}</div>', unicode(v), v[0]),
+            u'<span data-toggle="tooltip" title="{}">{}</div>', str(v), v[0]),
     },
 }
 
@@ -2596,7 +2596,7 @@ class AssetCollection(MainItemCollection):
                         'value': member.square_image_url,
                         'link': member.item_url,
                         'ajax_link': member.ajax_item_url,
-                        'link_text': unicode(member),
+                        'link_text': str(member),
                     } for member in item.all_members]
                 }))
             fields = super(AssetCollection.ItemView, self).to_fields(
@@ -2731,10 +2731,10 @@ class CostumeCollection(MainItemCollection):
             extra_fields.append(('card', {
                 'verbose_name': _('Card'),
                 'type': 'text_with_link',
-                'value': unicode(item.card),
+                'value': str(item.card),
                 'ajax_link': item.card.ajax_item_url,
                 'link': item.card.item_url,
-                'link_text': _('Open {thing}').format(thing=unicode(_('Card')).lower()),
+                'link_text': _('Open {thing}').format(thing=str(_('Card')).lower()),
                 'icon': 'album',
                 'image': item.card.image_trained_url or item.card.image_url,
             }))
@@ -2742,7 +2742,7 @@ class CostumeCollection(MainItemCollection):
             member_field_params = {
                 'verbose_name': _('Costume'),
                 'type': 'text',
-                'value': unicode(item.t_name),
+                'value': str(item.t_name),
                 'icon': 'profile',
             }
             if item.member:
@@ -2750,7 +2750,7 @@ class CostumeCollection(MainItemCollection):
                     'type': 'text_with_link',
                     'ajax_link': item.member.ajax_item_url,
                     'link': item.member.item_url,
-                    'link_text': unicode(item.member),
+                    'link_text': str(item.member),
                     'image': item.member.square_image_url,
                 })
             extra_fields.append(('costume', member_field_params))
@@ -2763,7 +2763,7 @@ class CostumeCollection(MainItemCollection):
                 'images': [{
                     'value': chibi.image_url,
                     'link': chibi.image_original_url,
-                    'link_text': u'{} - {}'.format(unicode(item), _('Chibi')),
+                    'link_text': u'{} - {}'.format(str(item), _('Chibi')),
                     'verbose_name': _('Chibi'),
                 } for chibi in item.chibis],
             }))

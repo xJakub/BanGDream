@@ -829,7 +829,7 @@ class RerunForm(AutoForm):
             if i_version is not None:
                 if models.Rerun.get_reverse_i('version', i_version) not in selected_item.versions:
                     raise forms.ValidationError(u'The {item} "{item_name}" is not available in {version}'.format(
-                        item=item, item_name=unicode(selected_item), version=models.Rerun.get_verbose_i('version', i_version),
+                        item=item, item_name=str(selected_item), version=models.Rerun.get_verbose_i('version', i_version),
                     ))
             return cleaned_data
 
@@ -906,7 +906,7 @@ def unlock_to_form(unlock):
         def __init__(self, *args, **kwargs):
             super(_UnlockSongForm, self).__init__(*args, **kwargs)
             help_text = mark_safe(u'Will be displayed as <code>{}</code>'.format(
-                unicode(models.Song.UNLOCK[unlock]['template']).format(**{
+                str(models.Song.UNLOCK[unlock]['template']).format(**{
                     variable: 'xxx'
                     for variable in models.Song.UNLOCK[unlock]['variables']
                 }),
