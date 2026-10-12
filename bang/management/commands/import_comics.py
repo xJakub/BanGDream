@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
-import requests, json, sys, os, cStringIO, io
+import requests, json, sys, os, io
 from PIL import Image
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
@@ -172,7 +172,7 @@ def download_image_file(url):
 def resize_image_from_data(data, filename, width=200, height=200):
     _, extension = os.path.splitext(filename)
     extension = extension.lower()
-    image = Image.open(cStringIO.StringIO(data))
+    image = Image.open(io.BytesIO(data))
     image = image.resize((int(width), int(height)))
     output = io.BytesIO()
     image.save(output, format={

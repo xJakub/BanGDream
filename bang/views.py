@@ -165,7 +165,8 @@ def teambuilder(request, context):
 ############################################################
 # Tmp staff page to manage prizes assignment
 
-import csv, datetime, urllib2
+import csv, datetime
+import urllib.request
 from dateutil.relativedelta import relativedelta
 from magi import models as magi_models
 
@@ -271,7 +272,7 @@ def generate_giveaway_discord_messages(request, context):
         generated += u'✦ **Due date**: …' + u'\n'
         return event_title, generated
 
-    csv_file = urllib2.urlopen(BACKUP_PRIZES_ASSIGNMENT_SHEET if context['backup_prizes'] else PRIZE_ASSIGNMENT_SHEET)
+    csv_file = urllib.request.urlopen(BACKUP_PRIZES_ASSIGNMENT_SHEET if context['backup_prizes'] else PRIZE_ASSIGNMENT_SHEET)
     csv_reader = csv.reader(csv_file)
     for i, row in enumerate(csv_reader):
         if i == 0: # Titles
