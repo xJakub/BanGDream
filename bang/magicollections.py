@@ -4,7 +4,8 @@ from itertools import chain
 from collections import OrderedDict
 from django.conf import settings as django_settings
 from django.core.exceptions import PermissionDenied
-from django.utils.translation import ugettext_lazy as _, string_concat, get_language
+from django.utils.translation import gettext_lazy as _, get_language
+from django.utils.text import format_lazy
 from django.utils.formats import date_format
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -226,7 +227,7 @@ class ActivityCollection(_ActivityCollection):
     class ListView(_ActivityCollection.ListView):
         def top_buttons(self, request, context):
             buttons = super(ActivityCollection.ListView, self).top_buttons(request, context)
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 top_tab = (
                     'this_week' if context['filter_form'].active_tab == 'top_this_week'
                     else ('all_time' if 'from_tab' in request.GET else None
@@ -238,11 +239,13 @@ class ActivityCollection(_ActivityCollection):
                         'classes': [
                             cls for cls in self.top_buttons_classes if cls != 'btn-main'
                         ] + ['btn-secondary'],
-                        'title': string_concat(
+                        'title': format_lazy(
+                            '{}{}{}',
                             _('TOP'), ' - ',
                             _('This week') if top_tab == 'this_week' else _('All time'),
                         ),
-                        'subtitle': _('Open {thing}').format(thing=string_concat(
+                        'subtitle': _('Open {thing}').format(thing=format_lazy(
+                            '{}{}{}',
                             _('TOP'), ' - ',
                             _('All time') if top_tab == 'this_week' else _('This week'),
                         )),
@@ -258,7 +261,7 @@ class ActivityCollection(_ActivityCollection):
     class AddView(_ActivityCollection.AddView):
         def check_permissions(self, request, context):
             super(ActivityCollection.AddView, self).check_permissions(request, context)
-            if not request.user.is_authenticated() or request.user.date_joined.year >= 2025:
+            if not request.user.is_authenticated or request.user.date_joined.year >= 2025:
                 raise PermissionDenied()
 
 ############################################################
@@ -330,7 +333,7 @@ class MemberCollection(MainItemCollection):
         setSubField(fields, 'alt_name', key='verbose_name', value=_('Name'))
         if item.alt_name is not None:
             setSubField(fields, 'name', key='icon', value='rock')
-            setSubField(fields, 'name', key='verbose_name', value=string_concat(_('Name'), ' (', _('Stage'), ')'))
+            setSubField(fields, 'name', key='verbose_name', value=format_lazy('{}{}{}{}', _('Name'), ' (', _('Stage'), ')'))
 
         if item.romaji_CV == item.CV or get_language() == 'ja':
             setSubField(fields, 'CV', key='verbose_name', value=_('CV'))
@@ -570,7 +573,7 @@ CARD_CUTEFORM = {
             if k.startswith('member-')
             else staticImageURL(v, folder='band', extension='png')
         ),
-        'title': string_concat(_('Member'), ' / ', _('Band')),
+        'title': format_lazy('{}{}{}', _('Member'), ' / ', _('Band')),
         'extra_settings': {
             'modal': 'true',
             'modal-text': 'true',
@@ -692,7 +695,7 @@ class CardCollection(MainItemCollection):
             if view.view == 'list_view':
                 buttons['favoritecard']['icon'] = 'star'
 
-        if request.user.is_authenticated() and request.user.hasPermission('manage_main_items'):
+        if request.user.is_authenticated and request.user.hasPermission('manage_main_items'):
             for field in ['art', 'art_trained'] if item.trainable else ['transparent', 'transparent_trained']:
                 if getattr(item, field):
                     buttons[u'preview_{}'.format(field)] = {
@@ -826,7 +829,7 @@ class CardCollection(MainItemCollection):
                 to_cos_link = lambda text, classes=None: u'<a href="{url}" target="_blank" class="{classes}" data-ajax-url="{ajax_url}" data-ajax-title="{ajax_title}">{text}</a>'.format(
                     url=item.associated_costume.item_url,
                     ajax_url=item.associated_costume.ajax_item_url + "?from_card",
-                    ajax_title=string_concat(_("Costume"), " - ", unicode(item)),
+                    ajax_title=format_lazy('{}{}{}', _("Costume"), " - ", unicode(item)),
                     text=text,
                     classes=classes or '',
                 )
@@ -901,7 +904,7 @@ class CardCollection(MainItemCollection):
         quick_add_view = 'icons'
 
         alt_views = MainItemCollection.ListView.alt_views + [
-            ('icons', { 'verbose_name': string_concat(_('Icons'), ' (', _('Quick add'), ')') }),
+            ('icons', { 'verbose_name': format_lazy('{}{}{}{}', _('Icons'), ' (', _('Quick add'), ')') }),
             ('statistics', {
                 'verbose_name': _('Statistics'),
                 'template': 'default_item_table_view',
@@ -945,14 +948,14 @@ class CardCollection(MainItemCollection):
             fields = super(CardCollection.ListView, self).ordering_fields(item, *args, only_fields=only_fields, exclude_fields=exclude_fields, **kwargs)
             if '_overall_max' in only_fields:
                 fields['overall_max'] = {
-                    'verbose_name': string_concat(_('Overall'), ' (', _('Maximum'), ')'),
+                    'verbose_name': format_lazy('{}{}{}{}', _('Overall'), ' (', _('Maximum'), ')'),
                     'value': item._overall_max,
                     'type': 'text',
                     'icon': 'skill',
                 }
             if '_overall_trained_max' in only_fields:
                 fields['overall_trained_max'] = {
-                    'verbose_name': string_concat(_('Overall'), ' (', _('Trained'), ', ', _('Maximum'), ')'),
+                    'verbose_name': format_lazy('{}{}{}{}{}{}', _('Overall'), ' (', _('Trained'), ', ', _('Maximum'), ')'),
                     'value': item._overall_trained_max,
                     'type': 'text',
                     'icon': 'skill',
@@ -2070,7 +2073,7 @@ class SongCollection(MainItemCollection):
                 # Create field
                 # Note: song_ prefix is for css minimizing song cover size
                 fields['song_alt_covers'] = {
-                    'verbose_name': string_concat(_('Album cover'), ' (', _('Other'), ')'),
+                    'verbose_name': format_lazy('{}{}{}{}', _('Album cover'), ' (', _('Other'), ')'),
                     'icon': 'pictures',
                     'type': 'images_links',
                     'images': song_alt_covers,
@@ -2271,7 +2274,7 @@ def to_CollectibleAreaItemCollection(cls):
                         'verbose_name': _('Area'),
                         'value': (
                             item.areaitem.t_type if not item.areaitem.instrument
-                            else string_concat(item.areaitem.t_type, ' (', item.areaitem.t_instrument, ')')),
+                            else format_lazy('{}{}{}{}', item.areaitem.t_type, ' (', item.areaitem.t_instrument, ')')),
                         'icon': 'pinpoint',
                     }))
                 extra_fields.append((
@@ -2360,7 +2363,7 @@ class AreaItemCollection(MainItemCollection):
             if item.type:
                fields += [('type', {
                     'verbose_name': _('Area'),
-                    'value': item.t_type if not item.instrument else string_concat(item.t_type, ' (', item.t_instrument, ')'),
+                    'value': item.t_type if not item.instrument else format_lazy('{}{}{}{}', item.t_type, ' (', item.t_instrument, ')'),
                     'icon': 'pinpoint',
                 })]
             fields += [('item_details', {
@@ -2398,7 +2401,7 @@ ASSET_CUTEFORM = {
             if k.startswith('member-')
             else staticImageURL(v, folder='band', extension='png')
         ),
-        'title': string_concat(_('Member'), ' / ', _('Band')),
+        'title': format_lazy('{}{}{}', _('Member'), ' / ', _('Band')),
         'extra_settings': {
             'modal': 'true',
             'modal-text': 'true',
@@ -2506,7 +2509,7 @@ class AssetCollection(MainItemCollection):
                     extra_fields.append(('{}image'.format(_info['prefix']), {
                         'image': staticImageURL('language/{}.png'.format(_info['image'])),
                         'link': getattr(item, '{}image_url'.format(_info['prefix'])),
-                        'link_text': string_concat(_('Image'), ' (', _info['translation'], ')'),
+                        'link_text': format_lazy('{}{}{}{}', _('Image'), ' (', _info['translation'], ')'),
                         'verbose_name': _('Image'),
                         'verbose_name_subtitle': _info['translation'],
                         'value': getattr(item, '{}image_thumbnail_url'.format(_info['prefix'])),
@@ -2533,7 +2536,7 @@ class AssetCollection(MainItemCollection):
                  fields[field] = subtitledImageLink(getattr(item, field), verbose_name, field)
 
         if item.type is 'title' and item.value:
-            setSubField(fields, 'name', key='value', value=string_concat(item.t_name, ' ', item.value))
+            setSubField(fields, 'name', key='value', value=format_lazy('{}{}{}', item.t_name, ' ', item.value))
 
         if item.source and item.source_link:
             setSubField(fields, 'source', key='type', value='link')

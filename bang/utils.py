@@ -2,7 +2,8 @@ import random, datetime
 from collections import OrderedDict
 from django.utils import timezone
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _, get_language, string_concat
+from django.utils.translation import gettext_lazy as _, get_language
+from django.utils.text import format_lazy
 from django.db.models import Q
 from magi.default_settings import RAW_CONTEXT
 from magi.utils import (
@@ -17,7 +18,7 @@ from bang import models
 
 def memberBandMergeCuteForm(cuteform):
     mergedFieldCuteForm(cuteform, {
-        'title': string_concat(_('Member'), '/', _('Band')),
+        'title': format_lazy('{}{}{}', _('Member'), '/', _('Band')),
         'extra_settings': {
             'modal': 'true',
             'modal-text': 'true',
@@ -68,7 +69,7 @@ def subtitledImageLink(item, verbose_name, icon=None, image=None, subtitle=None)
     }
 
 def add_rerun_buttons(view, buttons, request, item):
-    if request.user.is_authenticated() and request.user.hasPermission('manage_main_items'):
+    if request.user.is_authenticated and request.user.hasPermission('manage_main_items'):
         for version in item.versions:
             i_version = models.Rerun.get_i('version', version)
             buttons[u'{}add_rerun'.format(models.Rerun.VERSIONS[version]['prefix'])] = {
@@ -108,7 +109,7 @@ def add_rerun_fields(view, item, request):
                             classes=u' '.join(view.item_buttons_classes + ['staff-only']),
                             edit_sentence=rerun.edit_sentence,
                         ) if (request
-                              and request.user.is_authenticated()
+                              and request.user.is_authenticated
                               and request.user.hasPermission('manage_main_items'))
                         else None,
                     ] if x

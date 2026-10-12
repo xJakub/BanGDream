@@ -2,7 +2,8 @@
 from __future__ import division
 import datetime, time
 from collections import OrderedDict
-from django.utils.translation import ugettext_lazy as _, pgettext_lazy, string_concat, get_language
+from django.utils.translation import gettext_lazy as _, pgettext_lazy, get_language
+from django.utils.text import format_lazy
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -202,20 +203,20 @@ class Member(MagiModel):
 
     owner = models.ForeignKey(User, related_name='added_members')
 
-    name = models.CharField(string_concat(_('Name')), max_length=100, unique=True)
+    name = models.CharField(format_lazy('{}', _('Name')), max_length=100, unique=True)
     NAMES_CHOICES = LANGUAGES_NEED_OWN_NAME
     NAME_SOURCE_LANGUAGES = ['ja']
     d_names = models.TextField(_('Name'), null=True)
 
-    japanese_name = models.CharField(string_concat(_('Name'), ' (', t['Japanese'], ')'), max_length=100)
+    japanese_name = models.CharField(format_lazy('{}{}{}{}', _('Name'), ' (', t['Japanese'], ')'), max_length=100)
     display_name = property(displayNameHTML)
 
-    alt_name = models.CharField(string_concat(_('Name'), ' (Offstage)'), max_length=100, null=True)
+    alt_name = models.CharField(format_lazy('{}{}', _('Name'), ' (Offstage)'), max_length=100, null=True)
     ALT_NAMES_CHOICES = LANGUAGES_NEED_OWN_NAME
     ALT_NAME_SOURCE_LANGUAGES = ['ja']
     d_alt_names = models.TextField('Offstage Name', null=True)
 
-    japanese_alt_name = models.CharField(string_concat(_('Name'), ' (Offstage - ', t['Japanese'], ')'), max_length=100, null=True)
+    japanese_alt_name = models.CharField(format_lazy('{}{}{}{}', _('Name'), ' (Offstage - ', t['Japanese'], ')'), max_length=100, null=True)
     display_alt_name = property(lambda _s: displayNameHTML(_s, field_name='alt_name'))
     @property
     def first_name(self):
@@ -271,7 +272,7 @@ class Member(MagiModel):
 
     # TODO: separate page of voice acctresses
     romaji_CV = models.CharField(_('CV'), help_text='In romaji.', max_length=100, null=True)
-    CV = models.CharField(string_concat(_('CV'), ' (', t['Japanese'], ')'), help_text='In Japanese characters.', max_length=100, null=True)
+    CV = models.CharField(format_lazy('{}{}{}{}', _('CV'), ' (', t['Japanese'], ')'), help_text='In Japanese characters.', max_length=100, null=True)
 
     birthday = models.DateField(_('Birthday'), null=True, help_text='The year is not used, so write whatever')
 
@@ -476,7 +477,7 @@ class Card(MagiModel):
     NAME_SOURCE_LANGUAGES = ['ja']
     NAMES_CHOICES = ALT_LANGUAGES_EXCEPT_JP
     d_names = models.TextField(_('Title'), null=True)
-    japanese_name = models.CharField(string_concat(_('Title'), ' (', t['Japanese'], ')'), max_length=100, null=True)
+    japanese_name = models.CharField(format_lazy('{}{}{}{}', _('Title'), ' (', t['Japanese'], ')'), max_length=100, null=True)
 
     VERSIONS = Account.VERSIONS
     VERSIONS_CHOICES = Account.VERSION_CHOICES
@@ -629,7 +630,7 @@ class Card(MagiModel):
     # Main skill
 
     skill_name = models.CharField(_('Skill name'), max_length=100, null=True)
-    japanese_skill_name = models.CharField(string_concat(_('Skill name'), ' (', t['Japanese'], ')'), max_length=100, null=True)
+    japanese_skill_name = models.CharField(format_lazy('{}{}{}{}', _('Skill name'), ' (', t['Japanese'], ')'), max_length=100, null=True)
     SKILL_NAME_SOURCE_LANGUAGES = ['ja']
     SKILL_NAMES_CHOICES = ALT_LANGUAGES_EXCEPT_JP
     d_skill_names = models.TextField(_('Skill name'), null=True)
@@ -745,7 +746,7 @@ class Card(MagiModel):
     # Images
     image = models.ImageField(_('Icon'), upload_to=uploadItem('c'), null=True)
     _original_image = models.ImageField(null=True, upload_to=uploadTiny('c'))
-    image_trained = models.ImageField(string_concat(_('Icon'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/a'), null=True)
+    image_trained = models.ImageField(format_lazy('{}{}{}{}', _('Icon'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/a'), null=True)
     _original_image_trained = models.ImageField(null=True, upload_to=uploadTiny('c/a'))
 
     tinypng_settings = {
@@ -765,7 +766,7 @@ class Card(MagiModel):
     _2x_art = models.ImageField(null=True, upload_to=upload2x('c/art'))
     show_art_on_homepage = models.BooleanField(default=True)
 
-    art_trained = models.ImageField(string_concat(_('Art'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/art/a'), null=True)
+    art_trained = models.ImageField(format_lazy('{}{}{}{}', _('Art'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/art/a'), null=True)
     _original_art_trained = models.ImageField(null=True, upload_to=uploadTiny('c/art/a'))
     _tthumbnail_art_trained = models.ImageField(null=True, upload_to=uploadTthumb('c/art/a'))
     _2x_art_trained = models.ImageField(null=True, upload_to=upload2x('c/art/a'))
@@ -775,20 +776,20 @@ class Card(MagiModel):
     _tthumbnail_transparent = models.ImageField(null=True, upload_to=uploadTthumb('c/transparent'))
     _2x_transparent = models.ImageField(null=True, upload_to=upload2x('c/transparent'))
 
-    transparent_trained = models.ImageField(string_concat(_('Transparent'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/transparent/a'), null=True)
+    transparent_trained = models.ImageField(format_lazy('{}{}{}{}', _('Transparent'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/transparent/a'), null=True)
     _tthumbnail_transparent_trained = models.ImageField(null=True, upload_to=uploadTthumb('c/transparent/a'))
     _2x_transparent_trained = models.ImageField(null=True, upload_to=upload2x('c/transparent/a'))
 
     # Statistics
-    performance_min = models.PositiveIntegerField(string_concat(_('Performance'), ' (', _('Minimum'), ')'), default=0)
-    performance_max = models.PositiveIntegerField(string_concat(_('Performance'), ' (', _('Maximum'), ')'), default=0)
-    performance_trained_max = models.PositiveIntegerField(string_concat(_('Performance'), ' (', _('Trained'), ', ', _('Maximum'), ')'), default=0)
-    technique_min = models.PositiveIntegerField(string_concat(_('Technique'), ' (', _('Minimum'), ')'), default=0)
-    technique_max = models.PositiveIntegerField(string_concat(_('Technique'), ' (', _('Maximum'), ')'), default=0)
-    technique_trained_max = models.PositiveIntegerField(string_concat(_('Technique'), ' (', _('Trained'), ', ', _('Maximum'), ')'), default=0)
-    visual_min = models.PositiveIntegerField(string_concat(_('Visual'), ' (', _('Minimum'), ')'), default=0)
-    visual_max = models.PositiveIntegerField(string_concat(_('Visual'), ' (', _('Maximum'), ')'), default=0)
-    visual_trained_max = models.PositiveIntegerField(string_concat(_('Visual'), ' (', _('Trained'), ', ', _('Maximum'), ')'), default=0)
+    performance_min = models.PositiveIntegerField(format_lazy('{}{}{}{}', _('Performance'), ' (', _('Minimum'), ')'), default=0)
+    performance_max = models.PositiveIntegerField(format_lazy('{}{}{}{}', _('Performance'), ' (', _('Maximum'), ')'), default=0)
+    performance_trained_max = models.PositiveIntegerField(format_lazy('{}{}{}{}{}{}', _('Performance'), ' (', _('Trained'), ', ', _('Maximum'), ')'), default=0)
+    technique_min = models.PositiveIntegerField(format_lazy('{}{}{}{}', _('Technique'), ' (', _('Minimum'), ')'), default=0)
+    technique_max = models.PositiveIntegerField(format_lazy('{}{}{}{}', _('Technique'), ' (', _('Maximum'), ')'), default=0)
+    technique_trained_max = models.PositiveIntegerField(format_lazy('{}{}{}{}{}{}', _('Technique'), ' (', _('Trained'), ', ', _('Maximum'), ')'), default=0)
+    visual_min = models.PositiveIntegerField(format_lazy('{}{}{}{}', _('Visual'), ' (', _('Minimum'), ')'), default=0)
+    visual_max = models.PositiveIntegerField(format_lazy('{}{}{}{}', _('Visual'), ' (', _('Maximum'), ')'), default=0)
+    visual_trained_max = models.PositiveIntegerField(format_lazy('{}{}{}{}{}{}', _('Visual'), ' (', _('Trained'), ', ', _('Maximum'), ')'), default=0)
 
     @property
     def overall_min(self):
@@ -1131,7 +1132,7 @@ class Event(MagiModel):
     top_image = property(_event_gacha_top_image)
 
     name = models.CharField(_('Title'), max_length=100, unique=True)
-    japanese_name = models.CharField(string_concat(_('Title'), ' (', t['Japanese'], ')'), max_length=100, unique=True)
+    japanese_name = models.CharField(format_lazy('{}{}{}{}', _('Title'), ' (', t['Japanese'], ')'), max_length=100, unique=True)
     NAMES_CHOICES = ALT_LANGUAGES_EXCEPT_JP
     NAME_SOURCE_LANGUAGES = ['ja']
     d_names = models.TextField(_('Title'), null=True)
@@ -1155,8 +1156,8 @@ class Event(MagiModel):
         'live_goals',
     ]
 
-    start_date = models.DateTimeField(string_concat(_('Japanese version'), ' - ', _('Beginning')), null=True)
-    end_date = models.DateTimeField(string_concat(_('Japanese version'), ' - ',_('End')), null=True)
+    start_date = models.DateTimeField(format_lazy('{}{}{}', _('Japanese version'), ' - ', _('Beginning')), null=True)
+    end_date = models.DateTimeField(format_lazy('{}{}{}', _('Japanese version'), ' - ',_('End')), null=True)
 
     TIMES_PER_VERSIONS = {
         'JP': ((6, 0), (11, 59)),
@@ -1178,20 +1179,20 @@ class Event(MagiModel):
     VERSIONS_CHOICES = Account.VERSION_CHOICES
     c_versions = models.TextField(_('Server availability'), blank=True, null=True, default='"JP"')
 
-    english_image = models.ImageField(string_concat(_('English version'), ' - ', _('Image')), upload_to=uploadItem('e/e'), null=True)
+    english_image = models.ImageField(format_lazy('{}{}{}', _('English version'), ' - ', _('Image')), upload_to=uploadItem('e/e'), null=True)
     _original_english_image = models.ImageField(null=True, upload_to=uploadTiny('e/e'))
-    english_start_date = models.DateTimeField(string_concat(_('English version'), ' - ', _('Beginning')), null=True)
-    english_end_date = models.DateTimeField(string_concat(_('English version'), ' - ', _('End')), null=True)
+    english_start_date = models.DateTimeField(format_lazy('{}{}{}', _('English version'), ' - ', _('Beginning')), null=True)
+    english_end_date = models.DateTimeField(format_lazy('{}{}{}', _('English version'), ' - ', _('End')), null=True)
 
-    taiwanese_image = models.ImageField(string_concat(_('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('e/t'),  null=True)
+    taiwanese_image = models.ImageField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('e/t'),  null=True)
     _original_taiwanese_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'))
-    taiwanese_start_date = models.DateTimeField(string_concat(_('Taiwanese version'), ' - ', _('Beginning')), null=True)
-    taiwanese_end_date = models.DateTimeField(string_concat(_('Taiwanese version'), ' - ', _('End')), null=True)
+    taiwanese_start_date = models.DateTimeField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Beginning')), null=True)
+    taiwanese_end_date = models.DateTimeField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('End')), null=True)
 
-    korean_image = models.ImageField(string_concat(_('Korean version'), ' - ', _('Image')), upload_to=uploadItem('e/t'),  null=True)
+    korean_image = models.ImageField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Image')), upload_to=uploadItem('e/t'),  null=True)
     _original_korean_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'))
-    korean_start_date = models.DateTimeField(string_concat(_('Korean version'), ' - ', _('Beginning')), null=True)
-    korean_end_date = models.DateTimeField(string_concat(_('Korean version'), ' - ', _('End')), null=True)
+    korean_start_date = models.DateTimeField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Beginning')), null=True)
+    korean_end_date = models.DateTimeField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('End')), null=True)
 
     MAIN_CARD_ALLOWED_RARITIES = (3, 4)
     SECONDARY_CARD_ALLOWED_RARITIES = (2, 3, 4)
@@ -1385,8 +1386,8 @@ class Song(MagiModel):
     d_special_bands = models.TextField(_('Band'), null=True)
 
     japanese_name = models.CharField(_('Title'), max_length=100, unique=True)
-    romaji_name = models.CharField(string_concat(_('Title'), ' (', _('Romaji'), ')'), max_length=100, null=True)
-    name = models.CharField(string_concat(_('Title'), ' (', _('Translation'), ')'), max_length=100, null=True)
+    romaji_name = models.CharField(format_lazy('{}{}{}{}', _('Title'), ' (', _('Romaji'), ')'), max_length=100, null=True)
+    name = models.CharField(format_lazy('{}{}{}{}', _('Title'), ' (', _('Translation'), ')'), max_length=100, null=True)
     NAMES_CHOICES = ALT_LANGUAGES_EXCEPT_JP
     NAME_SOURCE_LANGUAGES = ['ja']
     d_names = models.TextField(_('Title'), null=True)
@@ -1411,21 +1412,21 @@ class Song(MagiModel):
     lyricist = models.CharField(_('Lyricist'), max_length=100, null=True)
     arranger = models.CharField(_('Arranger'), max_length=100, null=True)
 
-    easy_notes = models.PositiveIntegerField(string_concat(_('Easy'), ' - ', _('Notes')), null=True)
-    easy_difficulty = models.PositiveIntegerField(string_concat(_('Easy'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
-    normal_notes = models.PositiveIntegerField(string_concat(_('Normal'), ' - ', _('Notes')), null=True)
-    normal_difficulty = models.PositiveIntegerField(string_concat(_('Normal'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
-    hard_notes = models.PositiveIntegerField(string_concat(_('Hard'), ' - ', _('Notes')), null=True)
-    hard_difficulty = models.PositiveIntegerField(string_concat(_('Hard'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
-    expert_notes = models.PositiveIntegerField(string_concat(_('Expert'), ' - ', _('Notes')), null=True)
-    expert_difficulty = models.PositiveIntegerField(string_concat(_('Expert'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
-    special_notes = models.PositiveIntegerField(string_concat(_('Special'), ' - ', _('Notes')), null=True)
-    special_difficulty = models.PositiveIntegerField(string_concat(_('Special'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
+    easy_notes = models.PositiveIntegerField(format_lazy('{}{}{}', _('Easy'), ' - ', _('Notes')), null=True)
+    easy_difficulty = models.PositiveIntegerField(format_lazy('{}{}{}', _('Easy'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
+    normal_notes = models.PositiveIntegerField(format_lazy('{}{}{}', _('Normal'), ' - ', _('Notes')), null=True)
+    normal_difficulty = models.PositiveIntegerField(format_lazy('{}{}{}', _('Normal'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
+    hard_notes = models.PositiveIntegerField(format_lazy('{}{}{}', _('Hard'), ' - ', _('Notes')), null=True)
+    hard_difficulty = models.PositiveIntegerField(format_lazy('{}{}{}', _('Hard'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
+    expert_notes = models.PositiveIntegerField(format_lazy('{}{}{}', _('Expert'), ' - ', _('Notes')), null=True)
+    expert_difficulty = models.PositiveIntegerField(format_lazy('{}{}{}', _('Expert'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
+    special_notes = models.PositiveIntegerField(format_lazy('{}{}{}', _('Special'), ' - ', _('Notes')), null=True)
+    special_difficulty = models.PositiveIntegerField(format_lazy('{}{}{}', _('Special'), ' - ', _('Difficulty')), validators=DIFFICULTY_VALIDATORS, null=True)
 
     UNLOCK = OrderedDict([
         ('gift', {
             'translation': _('Gift'),
-            'template': string_concat(_('Gift'), ' ({occasion})'),
+            'template': format_lazy('{}{}', _('Gift'), ' ({occasion})'),
             'variables': ['occasion'],
         }),
         ('purchase', {
@@ -1459,8 +1460,8 @@ class Song(MagiModel):
             'variables': ['level'],
         }),
         ('level_band', {
-            'translation': string_concat(_('Level'), ' / ', _('Band')),
-            'template': string_concat('{band} - ', _('Level {level}')),
+            'translation': format_lazy('{}{}{}', _('Level'), ' / ', _('Band')),
+            'template': format_lazy('{}{}', '{band} - ', _('Level {level}')),
             'variables': ['level', 'band'],
             'variables_transform': {
                 'band': lambda _s, _v: Member.get_verbose_i('band', int(_v)),
@@ -1626,7 +1627,7 @@ class Gacha(MagiModel):
     top_image = property(_event_gacha_top_image)
 
     name = models.CharField(_('Title'), max_length=100, unique=True)
-    japanese_name = models.CharField(string_concat(_('Title'), ' (', t['Japanese'], ')'), max_length=100, unique=True)
+    japanese_name = models.CharField(format_lazy('{}{}{}{}', _('Title'), ' (', t['Japanese'], ')'), max_length=100, unique=True)
     NAMES_CHOICES = ALT_LANGUAGES_EXCEPT_JP
     NAME_SOURCE_LANGUAGES = ['ja']
     d_names = models.TextField(_('Title'), null=True)
@@ -1637,20 +1638,20 @@ class Gacha(MagiModel):
     start_date = models.DateTimeField(_('Beginning'), null=True)
     end_date = models.DateTimeField(_('End'), null=True)
 
-    english_image = models.ImageField(string_concat(_('English version'), ' - ', _('Image')), upload_to=uploadItem('e/e'), null=True)
+    english_image = models.ImageField(format_lazy('{}{}{}', _('English version'), ' - ', _('Image')), upload_to=uploadItem('e/e'), null=True)
     _original_english_image = models.ImageField(null=True, upload_to=uploadTiny('e/e'))
-    english_start_date = models.DateTimeField(string_concat(_('English version'), ' - ', _('Beginning')), null=True)
-    english_end_date = models.DateTimeField(string_concat(_('English version'), ' - ', _('End')), null=True)
+    english_start_date = models.DateTimeField(format_lazy('{}{}{}', _('English version'), ' - ', _('Beginning')), null=True)
+    english_end_date = models.DateTimeField(format_lazy('{}{}{}', _('English version'), ' - ', _('End')), null=True)
 
-    taiwanese_image = models.ImageField(string_concat(_('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('e/t'), null=True)
+    taiwanese_image = models.ImageField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('e/t'), null=True)
     _original_taiwanese_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'))
-    taiwanese_start_date = models.DateTimeField(string_concat(_('Taiwanese version'), ' - ', _('Beginning')), null=True)
-    taiwanese_end_date = models.DateTimeField(string_concat(_('Taiwanese version'), ' - ', _('End')), null=True)
+    taiwanese_start_date = models.DateTimeField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Beginning')), null=True)
+    taiwanese_end_date = models.DateTimeField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('End')), null=True)
 
-    korean_image = models.ImageField(string_concat(_('Korean version'), ' - ', _('Image')), upload_to=uploadItem('e/t'), null=True)
+    korean_image = models.ImageField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Image')), upload_to=uploadItem('e/t'), null=True)
     _original_korean_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'))
-    korean_start_date = models.DateTimeField(string_concat(_('Korean version'), ' - ', _('Beginning')), null=True)
-    korean_end_date = models.DateTimeField(string_concat(_('Korean version'), ' - ', _('End')), null=True)
+    korean_start_date = models.DateTimeField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Beginning')), null=True)
+    korean_end_date = models.DateTimeField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('End')), null=True)
 
     ATTRIBUTE_CHOICES = Card.ATTRIBUTE_CHOICES
     ATTRIBUTE_WITHOUT_I_CHOICES = True
@@ -1937,7 +1938,7 @@ class AreaItem(MagiModel):
         else:
             value = self.value_list[level-1]
         if self.is_percent:
-            value = string_concat(value, '%')
+            value = format_lazy('{}{}', value, '%')
         if level > len(self.life_list or ''):
             life = '???'
         else:
@@ -1990,13 +1991,13 @@ class Asset(MagiModel):
     image = models.ImageField(_('Image'), upload_to=uploadItem('asset'), null=True)
     _tthumbnail_image = models.ImageField(null=True, upload_to=uploadTthumb('asset'))
 
-    english_image = models.ImageField(string_concat(_('English version'), ' - ', _('Image')), upload_to=uploadItem('asset/e'), null=True)
+    english_image = models.ImageField(format_lazy('{}{}{}', _('English version'), ' - ', _('Image')), upload_to=uploadItem('asset/e'), null=True)
     _tthumbnail_english_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/e'))
 
-    taiwanese_image = models.ImageField(string_concat(_('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('asset/t'),  null=True)
+    taiwanese_image = models.ImageField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('asset/t'),  null=True)
     _tthumbnail_taiwanese_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/t'))
 
-    korean_image = models.ImageField(string_concat(_('Korean version'), ' - ', _('Image')), upload_to=uploadItem('asset/k'),  null=True)
+    korean_image = models.ImageField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Image')), upload_to=uploadItem('asset/k'),  null=True)
     _tthumbnail_korean_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/k'))
 
     def _get_top_image(self, thumbnail):
