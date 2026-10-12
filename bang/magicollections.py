@@ -2476,8 +2476,8 @@ class AssetCollection(MainItemCollection):
                 return queryset.select_related(variable)
         return queryset
 
-    def get_queryset(self, queryset, parameters, request):
-        queryset = super(AssetCollection, self).get_queryset(queryset, parameters, request)
+    def get_queryset(self, view, queryset, parameters, request):
+        queryset = super(AssetCollection, self).get_queryset(view, queryset, parameters, request)
         queryset = self._preselect_based_on_type(queryset, request, 'event')
         queryset = self._preselect_based_on_type(queryset, request, 'song')
         queryset = self._preselect_based_on_type(queryset, request, 'members', prefetch=True)
