@@ -165,7 +165,7 @@ def teambuilder(request, context):
 ############################################################
 # Tmp staff page to manage prizes assignment
 
-import csv, datetime
+import csv, datetime, io
 import urllib.request
 from dateutil.relativedelta import relativedelta
 from magi import models as magi_models
@@ -231,7 +231,7 @@ def generate_giveaway_discord_messages(request, context):
             and (row[col_by].strip().lower() == 'asked'
                  or row[col_shipped].strip())):
             return None, None
-        event_title = (row[col_event_title] if col_event_title is not None else 'Unknown').decode('utf-8')
+        event_title = row[col_event_title] if col_event_title is not None else 'Unknown'
         if context['backup_prizes']:
             event_title += u' (Backup prize)'
         generated = u''
@@ -252,9 +252,9 @@ def generate_giveaway_discord_messages(request, context):
         generated += u'Details of the prize to make:' + u'\n'
         for title, offset in offsets:
             if not isinstance(offset, int) or row[j + offset]:
-                generated += u'✦  **{}:** {}'.format(title, row[j + offset].decode('utf-8') if isinstance(offset, int) else offset) + u'\n'
+                generated += u'✦  **{}:** {}'.format(title, row[j + offset] if isinstance(offset, int) else offset) + u'\n'
         if row[col_message]:
-            generated += u'✦ **Message from the winner to the artist:**' + row[col_message].decode('utf-8') + u'\n'
+            generated += u'✦ **Message from the winner to the artist:**' + row[col_message] +u'\n'
         generated += u'' + u'\n'
         generated += u'Winner of the prize:' + u'\n'
         generated += u'✦ **Event:**' + event_title + u'\n'
@@ -273,7 +273,7 @@ def generate_giveaway_discord_messages(request, context):
         return event_title, generated
 
     csv_file = urllib.request.urlopen(BACKUP_PRIZES_ASSIGNMENT_SHEET if context['backup_prizes'] else PRIZE_ASSIGNMENT_SHEET)
-    csv_reader = csv.reader(csv_file)
+    csv_reader = csv.reader(io.TextIOWrapper(csv_file, encoding='utf-8', newline=''))
     for i, row in enumerate(csv_reader):
         if i == 0: # Titles
             for j, col in enumerate(row):
