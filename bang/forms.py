@@ -234,7 +234,7 @@ class CardForm(AutoForm):
         instance.save()
 
         # members can't cameo in their own cards
-        instance.cameo_members = filter(lambda x: x.id != instance.member_id, self.cleaned_data['cameo_members'])
+        instance.cameo_members.set([x for x in self.cleaned_data['cameo_members'] if x.id != instance.member_id])
         instance.update_cache('cameos')
         return instance
 
