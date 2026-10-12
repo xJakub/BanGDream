@@ -6,7 +6,6 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files.images import ImageFile
-from django.utils.six.moves import input
 from magi import urls # Unused, fills up RAW_CONTEXT for file uploading
 from magi.utils import dataToImageFile
 from magi import models as magi_models
