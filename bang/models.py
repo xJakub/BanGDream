@@ -730,9 +730,9 @@ class Card(MagiModel):
 
     SKILL_INFLUENCE_FIRST_BAND_ID = 501
     SKILL_INFLUENCE_CHOICES = OrderedDict(ATTRIBUTE_CHOICES +
-        [(SKILL_INFLUENCE_FIRST_BAND_ID + i, band) for i, band in enumerate(Member.BAND_CHOICES)])
+        [(i, band) for i, band in enumerate(Member.BAND_CHOICES, SKILL_INFLUENCE_FIRST_BAND_ID)])
     SKILL_INFLUENCE_WITHOUT_I_CHOICES = True
-    i_skill_influence = models.PositiveIntegerField('{influence}', null=True, choices=SKILL_INFLUENCE_CHOICES.iteritems())
+    i_skill_influence = models.PositiveIntegerField('{influence}', null=True, choices=list(SKILL_INFLUENCE_CHOICES.items()))
 
     @property
     def skill_influence(self):
