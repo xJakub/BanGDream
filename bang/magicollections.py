@@ -1422,7 +1422,7 @@ class EventCollection(MainItemCollection):
             exclude_fields += ['c_versions', 'japanese_name']
 
             if request:
-                request.fields_per_version = fields_per_version.keys()
+                request.fields_per_version = list(fields_per_version.keys())
             new_order += [_o for _l in orders_per_versions.values() for _o in _l] + EVENT_ITEM_FIELDS_ORDER_AFTER + order
 
             fields = super(EventCollection.ItemView, self).to_fields(
