@@ -182,8 +182,8 @@ class Account(BaseAccount):
     device = models.CharField(_('Device'), help_text=_('The model of your device. Example: Nexus 5, iPhone 4, iPad 2, ...'), max_length=150, null=True)
     stargems_bought = models.PositiveIntegerField(null=True)
 
-    screenshot = models.ImageField(_('Screenshot'), help_text=_('In-game profile screenshot'), upload_to=uploadItem('account_screenshot'), null=True)
-    _thumbnail_screenshot = models.ImageField(null=True, upload_to=uploadThumb('account_screenshot'))
+    screenshot = models.ImageField(_('Screenshot'), help_text=_('In-game profile screenshot'), upload_to=uploadItem('account_screenshot'), null=True, max_length=255)
+    _thumbnail_screenshot = models.ImageField(null=True, upload_to=uploadThumb('account_screenshot'), max_length=255)
     level_on_screenshot_upload = models.PositiveIntegerField(null=True)
     is_hidden_from_leaderboard = models.BooleanField('Hide from leaderboard', default=False, db_index=True)
 
@@ -201,7 +201,7 @@ class Account(BaseAccount):
 class Member(MagiModel):
     collection_name = 'member'
 
-    owner = models.ForeignKey(User, related_name='added_members')
+    owner = models.ForeignKey(User, related_name='added_members', on_delete=models.CASCADE)
 
     name = models.CharField(format_lazy('{}', _('Name')), max_length=100, unique=True)
     NAMES_CHOICES = LANGUAGES_NEED_OWN_NAME
@@ -226,10 +226,10 @@ class Member(MagiModel):
             return self.t_name.split(' ')[-1]
         return self.t_name.split(' ')[0]
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('i'))
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('i'))
-    square_image = models.ImageField(_('Image'), upload_to=uploadItem('i/m'))
-    _original_square_image = models.ImageField(null=True, upload_to=uploadTiny('i/m'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('i'), max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('i'), max_length=255)
+    square_image = models.ImageField(_('Image'), upload_to=uploadItem('i/m'), max_length=255)
+    _original_square_image = models.ImageField(null=True, upload_to=uploadTiny('i/m'), max_length=255)
     image_for_favorite_character = property(lambda _s: _s.square_image_url)
 
     BAND_CHOICES = (
@@ -436,7 +436,7 @@ class Member(MagiModel):
 class Card(MagiModel):
     collection_name = 'card'
 
-    owner = models.ForeignKey(User, related_name='added_cards')
+    owner = models.ForeignKey(User, related_name='added_cards', on_delete=models.CASCADE)
     id = models.PositiveIntegerField(_('ID'), unique=True, primary_key=True, db_index=True)
     member = models.ForeignKey(Member, verbose_name=_('Member'), related_name='cards', null=True, on_delete=models.SET_NULL, db_index=True)
 
@@ -744,10 +744,10 @@ class Card(MagiModel):
         return enum
 
     # Images
-    image = models.ImageField(_('Icon'), upload_to=uploadItem('c'), null=True)
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('c'))
-    image_trained = models.ImageField(format_lazy('{}{}{}{}', _('Icon'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/a'), null=True)
-    _original_image_trained = models.ImageField(null=True, upload_to=uploadTiny('c/a'))
+    image = models.ImageField(_('Icon'), upload_to=uploadItem('c'), null=True, max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('c'), max_length=255)
+    image_trained = models.ImageField(format_lazy('{}{}{}{}', _('Icon'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/a'), null=True, max_length=255)
+    _original_image_trained = models.ImageField(null=True, upload_to=uploadTiny('c/a'), max_length=255)
 
     tinypng_settings = {
         'art': {
@@ -760,25 +760,25 @@ class Card(MagiModel):
         },
     }
 
-    art = models.ImageField(_('Art'), upload_to=uploadItem('c/art'), null=True)
-    _original_art = models.ImageField(null=True, upload_to=uploadTiny('c/art'))
-    _tthumbnail_art = models.ImageField(null=True, upload_to=uploadTthumb('c/art'))
-    _2x_art = models.ImageField(null=True, upload_to=upload2x('c/art'))
+    art = models.ImageField(_('Art'), upload_to=uploadItem('c/art'), null=True, max_length=255)
+    _original_art = models.ImageField(null=True, upload_to=uploadTiny('c/art'), max_length=255)
+    _tthumbnail_art = models.ImageField(null=True, upload_to=uploadTthumb('c/art'), max_length=255)
+    _2x_art = models.ImageField(null=True, upload_to=upload2x('c/art'), max_length=255)
     show_art_on_homepage = models.BooleanField(default=True)
 
-    art_trained = models.ImageField(format_lazy('{}{}{}{}', _('Art'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/art/a'), null=True)
-    _original_art_trained = models.ImageField(null=True, upload_to=uploadTiny('c/art/a'))
-    _tthumbnail_art_trained = models.ImageField(null=True, upload_to=uploadTthumb('c/art/a'))
-    _2x_art_trained = models.ImageField(null=True, upload_to=upload2x('c/art/a'))
+    art_trained = models.ImageField(format_lazy('{}{}{}{}', _('Art'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/art/a'), null=True, max_length=255)
+    _original_art_trained = models.ImageField(null=True, upload_to=uploadTiny('c/art/a'), max_length=255)
+    _tthumbnail_art_trained = models.ImageField(null=True, upload_to=uploadTthumb('c/art/a'), max_length=255)
+    _2x_art_trained = models.ImageField(null=True, upload_to=upload2x('c/art/a'), max_length=255)
     show_trained_art_on_homepage = models.BooleanField(default=True)
 
-    transparent = models.ImageField(_('Transparent'), upload_to=uploadItem('c/transparent'), null=True)
-    _tthumbnail_transparent = models.ImageField(null=True, upload_to=uploadTthumb('c/transparent'))
-    _2x_transparent = models.ImageField(null=True, upload_to=upload2x('c/transparent'))
+    transparent = models.ImageField(_('Transparent'), upload_to=uploadItem('c/transparent'), null=True, max_length=255)
+    _tthumbnail_transparent = models.ImageField(null=True, upload_to=uploadTthumb('c/transparent'), max_length=255)
+    _2x_transparent = models.ImageField(null=True, upload_to=upload2x('c/transparent'), max_length=255)
 
-    transparent_trained = models.ImageField(format_lazy('{}{}{}{}', _('Transparent'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/transparent/a'), null=True)
-    _tthumbnail_transparent_trained = models.ImageField(null=True, upload_to=uploadTthumb('c/transparent/a'))
-    _2x_transparent_trained = models.ImageField(null=True, upload_to=upload2x('c/transparent/a'))
+    transparent_trained = models.ImageField(format_lazy('{}{}{}{}', _('Transparent'), ' (', _('Trained'), ')'), upload_to=uploadItem('c/transparent/a'), null=True, max_length=255)
+    _tthumbnail_transparent_trained = models.ImageField(null=True, upload_to=uploadTthumb('c/transparent/a'), max_length=255)
+    _2x_transparent_trained = models.ImageField(null=True, upload_to=upload2x('c/transparent/a'), max_length=255)
 
     # Statistics
     performance_min = models.PositiveIntegerField(format_lazy('{}{}{}{}', _('Performance'), ' (', _('Minimum'), ')'), default=0)
@@ -1027,13 +1027,13 @@ class Card(MagiModel):
 class CollectibleCard(AccountAsOwnerModel):
     collection_name = 'collectiblecard'
 
-    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='cardscollectors')
-    card = models.ForeignKey(Card, verbose_name=_('Card'), related_name='collectedcards')
+    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='cardscollectors', on_delete=models.CASCADE)
+    card = models.ForeignKey(Card, verbose_name=_('Card'), related_name='collectedcards', on_delete=models.CASCADE)
     trained = models.BooleanField(_('Trained'), default=False)
     prefer_untrained = models.BooleanField(_('Prefer untrained card image'), default=False)
-    max_leveled = models.NullBooleanField(_('Max level'))
-    first_episode = models.NullBooleanField(_('{nth} episode').format(nth=_('1st')))
-    memorial_episode = models.NullBooleanField(_('Memorial episode'))
+    max_leveled = models.BooleanField(_('Max level'), null=True)
+    first_episode = models.BooleanField(_('{nth} episode').format(nth=_('1st')), null=True)
+    memorial_episode = models.BooleanField(_('Memorial episode'), null=True)
     skill_level = models.PositiveIntegerField(_('Skill level'), null=True, blank=True, validators=[
         MinValueValidator(1),
         MaxValueValidator(5),
@@ -1092,8 +1092,8 @@ class CollectibleCard(AccountAsOwnerModel):
 class FavoriteCard(MagiModel):
     collection_name = 'favoritecard'
 
-    owner = models.ForeignKey(User, related_name='favorite_cards')
-    card = models.ForeignKey(Card, verbose_name=_('Card'), related_name='favorited')
+    owner = models.ForeignKey(User, related_name='favorite_cards', on_delete=models.CASCADE)
+    card = models.ForeignKey(Card, verbose_name=_('Card'), related_name='favorited', on_delete=models.CASCADE)
 
     class Meta:
         unique_together = (('owner', 'card'), )
@@ -1125,10 +1125,10 @@ def _event_gacha_top_image(item, image_name='image'):
 class Event(MagiModel):
     collection_name = 'event'
 
-    owner = models.ForeignKey(User, related_name='added_events')
+    owner = models.ForeignKey(User, related_name='added_events', on_delete=models.CASCADE)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('e'), null=True)
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('e'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('e'), null=True, max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('e'), max_length=255)
     top_image = property(_event_gacha_top_image)
 
     name = models.CharField(_('Title'), max_length=100, unique=True)
@@ -1179,18 +1179,18 @@ class Event(MagiModel):
     VERSIONS_CHOICES = Account.VERSION_CHOICES
     c_versions = models.TextField(_('Server availability'), blank=True, null=True, default='"JP"')
 
-    english_image = models.ImageField(format_lazy('{}{}{}', _('English version'), ' - ', _('Image')), upload_to=uploadItem('e/e'), null=True)
-    _original_english_image = models.ImageField(null=True, upload_to=uploadTiny('e/e'))
+    english_image = models.ImageField(format_lazy('{}{}{}', _('English version'), ' - ', _('Image')), upload_to=uploadItem('e/e'), null=True, max_length=255)
+    _original_english_image = models.ImageField(null=True, upload_to=uploadTiny('e/e'), max_length=255)
     english_start_date = models.DateTimeField(format_lazy('{}{}{}', _('English version'), ' - ', _('Beginning')), null=True)
     english_end_date = models.DateTimeField(format_lazy('{}{}{}', _('English version'), ' - ', _('End')), null=True)
 
-    taiwanese_image = models.ImageField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('e/t'),  null=True)
-    _original_taiwanese_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'))
+    taiwanese_image = models.ImageField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('e/t'),  null=True, max_length=255)
+    _original_taiwanese_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'), max_length=255)
     taiwanese_start_date = models.DateTimeField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Beginning')), null=True)
     taiwanese_end_date = models.DateTimeField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('End')), null=True)
 
-    korean_image = models.ImageField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Image')), upload_to=uploadItem('e/t'),  null=True)
-    _original_korean_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'))
+    korean_image = models.ImageField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Image')), upload_to=uploadItem('e/t'),  null=True, max_length=255)
+    _original_korean_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'), max_length=255)
     korean_start_date = models.DateTimeField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Beginning')), null=True)
     korean_end_date = models.DateTimeField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('End')), null=True)
 
@@ -1265,8 +1265,8 @@ class Event(MagiModel):
 class EventParticipation(AccountAsOwnerModel):
     collection_name = 'eventparticipation'
 
-    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='events')
-    event = models.ForeignKey(Event, verbose_name=_('Event'), related_name='participations')
+    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='events', on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, verbose_name=_('Event'), related_name='participations', on_delete=models.CASCADE)
 
     score = models.PositiveIntegerField(_('Score'), null=True)
     ranking = models.PositiveIntegerField(_('Ranking'), null=True)
@@ -1274,11 +1274,11 @@ class EventParticipation(AccountAsOwnerModel):
     song_score = models.PositiveIntegerField(_('Song score'), null=True)
     song_ranking = models.PositiveIntegerField(_('Song ranking'), null=True)
 
-    is_goal_master = models.NullBooleanField(_('Goal Master'))
-    is_ex_goal_master = models.NullBooleanField(_('EX Goal Master'))
+    is_goal_master = models.BooleanField(_('Goal Master'), null=True)
+    is_ex_goal_master = models.BooleanField(_('EX Goal Master'), null=True)
 
-    screenshot = models.ImageField(_('Screenshot'), upload_to=uploadItem('event_screenshot'), null=True)
-    _thumbnail_screenshot = models.ImageField(null=True, upload_to=uploadThumb('event_screenshot'))
+    screenshot = models.ImageField(_('Screenshot'), upload_to=uploadItem('event_screenshot'), null=True, max_length=255)
+    _thumbnail_screenshot = models.ImageField(null=True, upload_to=uploadThumb('event_screenshot'), max_length=255)
 
     @property
     def ranking_image_url(self):
@@ -1374,9 +1374,9 @@ class Song(MagiModel):
         ('arranger', _('Arranger')),
     ]
 
-    owner = models.ForeignKey(User, related_name='added_songs')
-    image = models.ImageField('Album cover', upload_to=uploadItem('s'))
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('s'))
+    owner = models.ForeignKey(User, related_name='added_songs', on_delete=models.CASCADE)
+    image = models.ImageField('Album cover', upload_to=uploadItem('s'), max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('s'), max_length=255)
 
     BAND_CHOICES = list(Member.BAND_CHOICES) + ['Glitter*Green', 'Special Band']
     i_band = models.PositiveIntegerField(_('Band'), choices=i_choices(BAND_CHOICES))
@@ -1547,8 +1547,8 @@ class Song(MagiModel):
 class PlayedSong(AccountAsOwnerModel):
     collection_name = 'playedsong'
 
-    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='playedsong')
-    song = models.ForeignKey(Song, verbose_name=_('Song'), related_name='playedby')
+    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='playedsong', on_delete=models.CASCADE)
+    song = models.ForeignKey(Song, verbose_name=_('Song'), related_name='playedby', on_delete=models.CASCADE)
 
     DIFFICULTY_CHOICES = (
         ('easy', _('Easy')),
@@ -1562,11 +1562,11 @@ class PlayedSong(AccountAsOwnerModel):
     difficulty_image_url = property(lambda _ps: staticImageURL(_ps.difficulty, folder=u'songs', extension='png'))
 
     score = models.PositiveIntegerField(_('Score'), null=True)
-    full_combo = models.NullBooleanField(_('Full combo'))
-    all_perfect = models.NullBooleanField(_('All perfect'))
+    full_combo = models.BooleanField(_('Full combo'), null=True)
+    all_perfect = models.BooleanField(_('All perfect'), null=True)
 
-    screenshot = models.ImageField(_('Screenshot'), upload_to=uploadItem('song_screenshot'), null=True)
-    _thumbnail_screenshot = models.ImageField(null=True, upload_to=uploadThumb('song_screenshot'))
+    screenshot = models.ImageField(_('Screenshot'), upload_to=uploadItem('song_screenshot'), null=True, max_length=255)
+    _thumbnail_screenshot = models.ImageField(null=True, upload_to=uploadThumb('song_screenshot'), max_length=255)
 
     @property
     def image(self):
@@ -1620,10 +1620,10 @@ class PlayedSong(AccountAsOwnerModel):
 class Gacha(MagiModel):
     collection_name = 'gacha'
 
-    owner = models.ForeignKey(User, related_name='added_gacha')
+    owner = models.ForeignKey(User, related_name='added_gacha', on_delete=models.CASCADE)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('g'), null=True)
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('g'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('g'), null=True, max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('g'), max_length=255)
     top_image = property(_event_gacha_top_image)
 
     name = models.CharField(_('Title'), max_length=100, unique=True)
@@ -1638,18 +1638,18 @@ class Gacha(MagiModel):
     start_date = models.DateTimeField(_('Beginning'), null=True)
     end_date = models.DateTimeField(_('End'), null=True)
 
-    english_image = models.ImageField(format_lazy('{}{}{}', _('English version'), ' - ', _('Image')), upload_to=uploadItem('e/e'), null=True)
-    _original_english_image = models.ImageField(null=True, upload_to=uploadTiny('e/e'))
+    english_image = models.ImageField(format_lazy('{}{}{}', _('English version'), ' - ', _('Image')), upload_to=uploadItem('e/e'), null=True, max_length=255)
+    _original_english_image = models.ImageField(null=True, upload_to=uploadTiny('e/e'), max_length=255)
     english_start_date = models.DateTimeField(format_lazy('{}{}{}', _('English version'), ' - ', _('Beginning')), null=True)
     english_end_date = models.DateTimeField(format_lazy('{}{}{}', _('English version'), ' - ', _('End')), null=True)
 
-    taiwanese_image = models.ImageField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('e/t'), null=True)
-    _original_taiwanese_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'))
+    taiwanese_image = models.ImageField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('e/t'), null=True, max_length=255)
+    _original_taiwanese_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'), max_length=255)
     taiwanese_start_date = models.DateTimeField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Beginning')), null=True)
     taiwanese_end_date = models.DateTimeField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('End')), null=True)
 
-    korean_image = models.ImageField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Image')), upload_to=uploadItem('e/t'), null=True)
-    _original_korean_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'))
+    korean_image = models.ImageField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Image')), upload_to=uploadItem('e/t'), null=True, max_length=255)
+    _original_korean_image = models.ImageField(null=True, upload_to=uploadTiny('e/t'), max_length=255)
     korean_start_date = models.DateTimeField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Beginning')), null=True)
     korean_end_date = models.DateTimeField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('End')), null=True)
 
@@ -1714,8 +1714,8 @@ class Gacha(MagiModel):
 class Rerun(MagiModel):
     collection_name = 'rerun'
 
-    event = models.ForeignKey(Event, verbose_name=_('Event'), related_name='reruns', null=True)
-    gacha = models.ForeignKey(Gacha, verbose_name=_('Gacha'), related_name='reruns', null=True)
+    event = models.ForeignKey(Event, verbose_name=_('Event'), related_name='reruns', null=True, on_delete=models.CASCADE)
+    gacha = models.ForeignKey(Gacha, verbose_name=_('Gacha'), related_name='reruns', null=True, on_delete=models.CASCADE)
 
     ITEMS = ['event', 'gacha']
     ITEMS_MODELS = { 'event': Event, 'gacha': Gacha }
@@ -1757,10 +1757,10 @@ class Rerun(MagiModel):
 
 class Item(MagiModel):
     collection_name = 'item'
-    owner = models.ForeignKey(User, related_name='added_items')
+    owner = models.ForeignKey(User, related_name='added_items', on_delete=models.CASCADE)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('items'))
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('items'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('items'), max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('items'), max_length=255)
 
     name = models.CharField(_('Title'), max_length=100, null=True, help_text='plural')
     NAMES_CHOICES = ALL_ALT_LANGUAGES
@@ -1790,8 +1790,8 @@ class Item(MagiModel):
 class CollectibleItem(AccountAsOwnerModel):
     collection_name = 'collectibleitem'
 
-    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='items')
-    item = models.ForeignKey(Item, verbose_name=_('Item'), related_name='collectedby')
+    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='items', on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, verbose_name=_('Item'), related_name='collectedby', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(_('Quantity'), default=1)
 
     image = property(lambda _s: _s.item.image)
@@ -1813,10 +1813,10 @@ class CollectibleItem(AccountAsOwnerModel):
 class Area(MagiModel):
     collection_name = 'area'
 
-    owner = models.ForeignKey(User, related_name='added_areas')
+    owner = models.ForeignKey(User, related_name='added_areas', on_delete=models.CASCADE)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('areas'))
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('areas'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('areas'), max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('areas'), max_length=255)
 
     name = models.CharField(_('Title'), max_length=100)
     NAMES_CHOICES = ALL_ALT_LANGUAGES
@@ -1827,10 +1827,10 @@ class Area(MagiModel):
 
 class AreaItem(MagiModel):
     collection_name = 'areaitem'
-    owner = models.ForeignKey(User, related_name='added_area_items')
+    owner = models.ForeignKey(User, related_name='added_area_items', on_delete=models.CASCADE)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('areas/items'))
-    _original_image = models.ImageField(null=True, upload_to=uploadTiny('areas/items'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('areas/items'), max_length=255)
+    _original_image = models.ImageField(null=True, upload_to=uploadTiny('areas/items'), max_length=255)
 
     name = models.CharField(_('Title'), max_length=100, null=True)
     NAMES_CHOICES = ALL_ALT_LANGUAGES
@@ -1958,8 +1958,8 @@ class AreaItem(MagiModel):
 class CollectibleAreaItem(AccountAsOwnerModel):
     collection_name = 'collectibleareaitem'
 
-    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='areaitems')
-    areaitem = models.ForeignKey(AreaItem, verbose_name=_('Area item'), related_name='collectedby')
+    account = models.ForeignKey(Account, verbose_name=_('Account'), related_name='areaitems', on_delete=models.CASCADE)
+    areaitem = models.ForeignKey(AreaItem, verbose_name=_('Area item'), related_name='collectedby', on_delete=models.CASCADE)
     level = models.PositiveIntegerField(_('Level'), default=1)
 
     image = property(lambda _s: _s.areaitem.image)
@@ -1986,19 +1986,19 @@ class CollectibleAreaItem(AccountAsOwnerModel):
 class Asset(MagiModel):
     collection_name = 'asset'
 
-    owner = models.ForeignKey(User, related_name='added_assets')
+    owner = models.ForeignKey(User, related_name='added_assets', on_delete=models.CASCADE)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('asset'), null=True)
-    _tthumbnail_image = models.ImageField(null=True, upload_to=uploadTthumb('asset'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('asset'), null=True, max_length=255)
+    _tthumbnail_image = models.ImageField(null=True, upload_to=uploadTthumb('asset'), max_length=255)
 
-    english_image = models.ImageField(format_lazy('{}{}{}', _('English version'), ' - ', _('Image')), upload_to=uploadItem('asset/e'), null=True)
-    _tthumbnail_english_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/e'))
+    english_image = models.ImageField(format_lazy('{}{}{}', _('English version'), ' - ', _('Image')), upload_to=uploadItem('asset/e'), null=True, max_length=255)
+    _tthumbnail_english_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/e'), max_length=255)
 
-    taiwanese_image = models.ImageField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('asset/t'),  null=True)
-    _tthumbnail_taiwanese_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/t'))
+    taiwanese_image = models.ImageField(format_lazy('{}{}{}', _('Taiwanese version'), ' - ', _('Image')), upload_to=uploadItem('asset/t'),  null=True, max_length=255)
+    _tthumbnail_taiwanese_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/t'), max_length=255)
 
-    korean_image = models.ImageField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Image')), upload_to=uploadItem('asset/k'),  null=True)
-    _tthumbnail_korean_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/k'))
+    korean_image = models.ImageField(format_lazy('{}{}{}', _('Korean version'), ' - ', _('Image')), upload_to=uploadItem('asset/k'),  null=True, max_length=255)
+    _tthumbnail_korean_image = models.ImageField(null=True, upload_to=uploadTthumb('asset/k'), max_length=255)
 
     def _get_top_image(self, thumbnail):
         show_image_version = 'EN'
@@ -2215,8 +2215,8 @@ class Asset(MagiModel):
 # Costume
 
 class Chibi(BaseMagiModel):
-    image = models.ImageField(upload_to=uploadItem('cos/chibi'))
-    _original_image = models.ImageField(upload_to=uploadTiny('cos/chibi'), null=True)
+    image = models.ImageField(upload_to=uploadItem('cos/chibi'), max_length=255)
+    _original_image = models.ImageField(upload_to=uploadTiny('cos/chibi'), null=True, max_length=255)
     costume = models.ForeignKey('Costume', verbose_name=_('Costume'), related_name='owned_chibis', on_delete=models.CASCADE)
 
     tinypng_settings = {
@@ -2231,7 +2231,7 @@ class Chibi(BaseMagiModel):
 
 class Costume(MagiModel):
     collection_name = 'costume'
-    owner = models.ForeignKey(User, related_name='added_costume')
+    owner = models.ForeignKey(User, related_name='added_costume', on_delete=models.CASCADE)
 
     COSTUME_TYPE_CHOICES = OrderedDict([
         # Costumes that can be used in lives. Usually associated with cards but
@@ -2257,8 +2257,8 @@ class Costume(MagiModel):
             return self.card.t_name or self.card.japanese_name
         return MagiModel.t_name.fget(self)
 
-    image = models.ImageField(_('Image'), upload_to=uploadItem('cos/p'), null=True)
-    _tthumbnail_image = models.ImageField(null=True, upload_to=uploadTthumb('cos/z'))
+    image = models.ImageField(_('Image'), upload_to=uploadItem('cos/p'), null=True, max_length=255)
+    _tthumbnail_image = models.ImageField(null=True, upload_to=uploadTthumb('cos/z'), max_length=255)
     model_pkg = models.FileField(pgettext_lazy('BanPa model viewer', 'Model'), upload_to=uploadItem('cos/z'), null=True)
 
     @property
