@@ -28,13 +28,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='event',
             name='image',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e'), null=True, verbose_name='Image'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e'), null=True, verbose_name='Image'),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='gacha',
             name='image',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'g'), null=True, verbose_name='Image'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('g'), null=True, verbose_name='Image'),
             preserve_default=True,
         ),
     ]

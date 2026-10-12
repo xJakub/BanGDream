@@ -57,19 +57,19 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='event',
             name='english_rare_stamp',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/stamps/en'), null=True, verbose_name='English version - Rare stamp'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/stamps/en'), null=True, verbose_name='English version - Rare stamp'),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='event',
             name='korean_rare_stamp',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/stamps/kr'), null=True, verbose_name='Korean version - Rare stamp'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/stamps/kr'), null=True, verbose_name='Korean version - Rare stamp'),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='event',
             name='taiwanese_rare_stamp',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/stamps/tw'), null=True, verbose_name='Taiwanese version - Rare stamp'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/stamps/tw'), null=True, verbose_name='Taiwanese version - Rare stamp'),
             preserve_default=True,
         ),
     ]

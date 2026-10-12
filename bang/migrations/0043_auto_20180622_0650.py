@@ -19,8 +19,8 @@ class Migration(migrations.Migration):
                 ('i_version', models.PositiveIntegerField(verbose_name='Version', choices=[(0, 'Japanese version'), (1, 'English version'), (2, 'Taiwanese version'), (3, 'Korean version')])),
                 ('start_date', models.DateTimeField(verbose_name='Beginning')),
                 ('end_date', models.DateTimeField(verbose_name='End')),
-                ('event', models.ForeignKey(related_name='reruns', verbose_name='Event', to='bang.Event', null=True)),
-                ('gacha', models.ForeignKey(related_name='reruns', verbose_name='Gacha', to='bang.Gacha', null=True)),
+                ('event', models.ForeignKey(related_name='reruns', verbose_name='Event', to='bang.Event', null=True, on_delete=models.CASCADE)),
+                ('gacha', models.ForeignKey(related_name='reruns', verbose_name='Gacha', to='bang.Gacha', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,

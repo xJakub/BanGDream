@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='account',
             name='i_os',
-            field=models.PositiveIntegerField(null=True, verbose_name='Operating System', choices=[(0, b'Android'), (1, b'iOs')]),
+            field=models.PositiveIntegerField(null=True, verbose_name='Operating System', choices=[(0, 'Android'), (1, 'iOs')]),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='account',
             name='screenshot',
-            field=models.ImageField(help_text='In-game profile screenshot', upload_to=magi.utils.uploadItem(b'account_screenshot'), null=True, verbose_name='Screenshot'),
+            field=models.ImageField(help_text='In-game profile screenshot', upload_to=magi.utils.uploadItem('account_screenshot'), null=True, verbose_name='Screenshot'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='card',
             name='c_versions',
-            field=models.TextField(default=b'"JP"', null=True, verbose_name='Available in versions', blank=True),
+            field=models.TextField(default='"JP"', null=True, verbose_name='Available in versions', blank=True),
             preserve_default=True,
         ),
         migrations.AlterField(
@@ -75,7 +75,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='card',
             name='art',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'c/art'), null=True, verbose_name='Art'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('c/art'), null=True, verbose_name='Art'),
             preserve_default=True,
         ),
         migrations.AlterField(
@@ -93,13 +93,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='card',
             name='image',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'c'), null=True, verbose_name='Icon'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('c'), null=True, verbose_name='Icon'),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='card',
             name='transparent',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'c/transparent'), null=True, verbose_name='Transparent'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('c/transparent'), null=True, verbose_name='Transparent'),
             preserve_default=True,
         ),
     ]

@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='card',
             name='live2d_model_pkg',
-            field=models.FileField(upload_to=magi.utils.uploadItem(b'c/l2d'), null=True, verbose_name='Live2D'),
+            field=models.FileField(upload_to=magi.utils.uploadItem('c/l2d'), null=True, verbose_name='Live2D'),
             preserve_default=True,
         ),
     ]

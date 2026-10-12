@@ -14,13 +14,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='card',
             name='skill_alt_stamina',
-            field=models.PositiveIntegerField(null=True, verbose_name=b'{alt_stamina}'),
+            field=models.PositiveIntegerField(null=True, verbose_name='{alt_stamina}'),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='card',
             name='i_skill_special',
-            field=models.PositiveIntegerField(null=True, verbose_name=b'Skill details - Special case', choices=[(0, b'Based off PERFECT notes'), (1, b'Scoreup based on stamina')]),
+            field=models.PositiveIntegerField(null=True, verbose_name='Skill details - Special case', choices=[(0, 'Based off PERFECT notes'), (1, 'Scoreup based on stamina')]),
             preserve_default=True,
         ),
         migrations.AlterField(

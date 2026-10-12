@@ -75,13 +75,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='areaitem',
             name='is_percent',
-            field=models.BooleanField(default=True, verbose_name=b'Values are %?'),
+            field=models.BooleanField(default=True, verbose_name='Values are %?'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='areaitem',
             name='lifes',
-            field=models.CharField(help_text=b'Seperate with spaces in ascending order', max_length=100, null=True),
+            field=models.CharField(help_text='Seperate with spaces in ascending order', max_length=100, null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -93,7 +93,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='areaitem',
             name='values',
-            field=models.CharField(help_text=b'Seperate with spaces in ascending order', max_length=100, null=True),
+            field=models.CharField(help_text='Seperate with spaces in ascending order', max_length=100, null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -135,7 +135,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='areaitem',
             name='member',
-            field=models.ForeignKey(related_name='area_items', on_delete=django.db.models.deletion.SET_NULL, verbose_name='Member', to='bang.Member', help_text=b'Unless instrument, just choose member in affected band', null=True),
+            field=models.ForeignKey(related_name='area_items', on_delete=django.db.models.deletion.SET_NULL, verbose_name='Member', to='bang.Member', help_text='Unless instrument, just choose member in affected band', null=True),
             preserve_default=True,
         ),
         migrations.AlterField(

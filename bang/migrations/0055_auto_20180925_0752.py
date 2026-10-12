@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='account',
             name='is_hidden_from_leaderboard',
-            field=models.BooleanField(default=False, db_index=True, verbose_name=b'Hide from leaderboard'),
+            field=models.BooleanField(default=False, db_index=True, verbose_name='Hide from leaderboard'),
             preserve_default=True,
         ),
         migrations.AddField(

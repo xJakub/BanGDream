@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='event',
             name='rare_stamp',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/stamps'), null=True, verbose_name='Rare Stamp'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/stamps'), null=True, verbose_name='Rare Stamp'),
             preserve_default=True,
         ),
     ]

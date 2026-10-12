@@ -16,25 +16,25 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='asset',
             name='_tthumbnail_english_image',
-            field=models.ImageField(null=True, upload_to=magi.utils.uploadTthumb(b'asset/e')),
+            field=models.ImageField(null=True, upload_to=magi.utils.uploadTthumb('asset/e')),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='asset',
             name='_tthumbnail_image',
-            field=models.ImageField(null=True, upload_to=magi.utils.uploadTthumb(b'asset')),
+            field=models.ImageField(null=True, upload_to=magi.utils.uploadTthumb('asset')),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='asset',
             name='_tthumbnail_korean_image',
-            field=models.ImageField(null=True, upload_to=magi.utils.uploadTthumb(b'asset/k')),
+            field=models.ImageField(null=True, upload_to=magi.utils.uploadTthumb('asset/k')),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='asset',
             name='_tthumbnail_taiwanese_image',
-            field=models.ImageField(null=True, upload_to=magi.utils.uploadTthumb(b'asset/t')),
+            field=models.ImageField(null=True, upload_to=magi.utils.uploadTthumb('asset/t')),
             preserve_default=True,
         ),
         migrations.AlterField(

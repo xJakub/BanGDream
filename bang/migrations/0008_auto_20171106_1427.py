@@ -18,15 +18,15 @@ class Migration(migrations.Migration):
             name='Gacha',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('image', models.ImageField(upload_to=magi.utils.uploadItem(b'g'), verbose_name='Image')),
+                ('image', models.ImageField(upload_to=magi.utils.uploadItem('g'), verbose_name='Image')),
                 ('name', models.CharField(unique=True, max_length=100, verbose_name='Name')),
                 ('japanese_name', models.CharField(unique=True, max_length=100, verbose_name='Name (Japanese)')),
                 ('start_date', models.DateTimeField(null=True, verbose_name='Beginning')),
                 ('end_date', models.DateTimeField(null=True, verbose_name='End')),
                 ('i_attribute', models.PositiveIntegerField(verbose_name='Attribute', choices=[(1, 'Power'), (2, 'Cool'), (3, 'Pure'), (4, 'Happy')])),
-                ('cards', models.ManyToManyField(related_name='gachas', verbose_name=b'Cards', to='bang.Card')),
-                ('event', models.ForeignKey(related_name='gachas', verbose_name='Event', to='bang.Event')),
-                ('owner', models.ForeignKey(related_name='added_gacha', to=settings.AUTH_USER_MODEL)),
+                ('cards', models.ManyToManyField(related_name='gachas', verbose_name='Cards', to='bang.Card')),
+                ('event', models.ForeignKey(related_name='gachas', verbose_name='Event', to='bang.Event', on_delete=models.CASCADE)),
+                ('owner', models.ForeignKey(related_name='added_gacha', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='card',
             name='_cache_event_image',
-            field=models.ImageField(null=True, upload_to=magi.utils.uploadItem(b'e')),
+            field=models.ImageField(null=True, upload_to=magi.utils.uploadItem('e')),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -90,13 +90,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='event',
             name='main_card',
-            field=models.ForeignKey(related_name='main_card_event', to='bang.Card', null=True),
+            field=models.ForeignKey(related_name='main_card_event', to='bang.Card', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='event',
             name='secondary_card',
-            field=models.ForeignKey(related_name='secondary_card_event', to='bang.Card', null=True),
+            field=models.ForeignKey(related_name='secondary_card_event', to='bang.Card', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -108,7 +108,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='event',
             name='rare_stamp',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/stamps'), verbose_name='Rare Stamp'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/stamps'), verbose_name='Rare Stamp'),
             preserve_default=True,
         ),
     ]

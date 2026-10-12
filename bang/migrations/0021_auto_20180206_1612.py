@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='event',
             name='c_versions',
-            field=models.TextField(default=b'"JP"', null=True, verbose_name='Available in versions', blank=True),
+            field=models.TextField(default='"JP"', null=True, verbose_name='Available in versions', blank=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='event',
             name='english_image',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/e'), null=True, verbose_name='English version - Image'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/e'), null=True, verbose_name='English version - Image'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='event',
             name='korean_image',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/t'), null=True, verbose_name='Korean version - Image'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/t'), null=True, verbose_name='Korean version - Image'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -75,7 +75,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='event',
             name='taiwanese_image',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/t'), null=True, verbose_name='Taiwanese version - Image'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/t'), null=True, verbose_name='Taiwanese version - Image'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -99,7 +99,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='gacha',
             name='c_versions',
-            field=models.TextField(default=b'"JP"', null=True, verbose_name='Available in versions', blank=True),
+            field=models.TextField(default='"JP"', null=True, verbose_name='Available in versions', blank=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -111,7 +111,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='gacha',
             name='english_image',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/e'), null=True, verbose_name='English version - Image'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/e'), null=True, verbose_name='English version - Image'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -129,7 +129,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='gacha',
             name='korean_image',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/t'), null=True, verbose_name='Korean version - Image'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/t'), null=True, verbose_name='Korean version - Image'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -153,7 +153,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='gacha',
             name='taiwanese_image',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'e/t'), null=True, verbose_name='Taiwanese version - Image'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('e/t'), null=True, verbose_name='Taiwanese version - Image'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -165,13 +165,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='playedsong',
             name='screenshot',
-            field=models.ImageField(upload_to=magi.utils.uploadItem(b'song_screenshot'), null=True, verbose_name='Screenshot'),
+            field=models.ImageField(upload_to=magi.utils.uploadItem('song_screenshot'), null=True, verbose_name='Screenshot'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='song',
             name='c_versions',
-            field=models.TextField(default=b'"JP"', null=True, verbose_name='Available in versions', blank=True),
+            field=models.TextField(default='"JP"', null=True, verbose_name='Available in versions', blank=True),
             preserve_default=True,
         ),
         migrations.AlterField(
