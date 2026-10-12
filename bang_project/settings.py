@@ -52,6 +52,10 @@ TEMPLATES = [
 
 ALLOWED_HOSTS = []
 
+# Override this at local_settings.py
+SITE_URL = 'https://bandori.party/'
+SITE_STATIC_URL = '//i.bandori.party/'
+
 
 # Application definition
 

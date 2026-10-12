@@ -287,8 +287,8 @@ ACCOUNT_TAB_ORDERING = ['about', 'collectiblecard', 'eventparticipation', 'playe
 ############################################################
 # Technical settings
 
-SITE_URL = 'https://bandori.party/'
-SITE_STATIC_URL = '//i.bandori.party/'
+SITE_URL = django_settings.SITE_URL
+SITE_STATIC_URL = django_settings.SITE_STATIC_URL
 
 GET_GLOBAL_CONTEXT = bangGlobalContext
 ACCOUNT_MODEL = models.Account
