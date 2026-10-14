@@ -345,7 +345,7 @@ wheels = [
 [[package]]
 name = "magicircles"
 version = "1.0"
-source = { git = "https://github.com/xJakub/MagiCircles?branch=master#e0ce41fad18eb9b8b0db6a6abc0536057d262c0b" }
+source = { git = "https://github.com/xJakub/MagiCircles?branch=master#d1f1dcda05c31b8bc1c631139333718e8d5d88fb" }
 dependencies = [
     { name = "django" },
     { name = "django-bootstrap-form" },
