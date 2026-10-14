@@ -597,7 +597,7 @@ class Card(MagiModel):
         ('based_on_accuracy_influence', 'Better scoreup if you can hit perfects, with a band/attribute influence'),
     )
 
-    ALL_VARIABLES = { item: True for sublist in [ _info['variables'] + _info['side_variables'] + [ii for sl in [_i for _i in _info.get('special_variables', {}).values()] for ii in sl] for _info in SKILL_TYPES.values() ] for item in sublist }.keys()
+    ALL_VARIABLES = list({ item: True for sublist in [ _info['variables'] + _info['side_variables'] + [ii for sl in [_i for _i in _info.get('special_variables', {}).values()] for ii in sl] for _info in SKILL_TYPES.values() ] for item in sublist }.keys())
     VARIABLES_PER_SKILL_TYPES = {
         'skill': { _skill_type: _info['variables'] for _skill_type, _info in SKILL_TYPES.items() },
         'side_skill': { _skill_type: _info['side_variables'] for _skill_type, _info in SKILL_TYPES.items() },
